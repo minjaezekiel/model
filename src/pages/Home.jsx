@@ -1,3 +1,4 @@
+// Updated Home.jsx (only the relevant parts)
 import React, { useEffect, useState } from "react";
 import { loadExcel } from "../utils/excel";
 import SearchBar from "../components/SearchBar";
@@ -15,9 +16,13 @@ function Home() {
 
   useEffect(() => {
     async function fetchExcel() {
-      const { sheets } = await loadExcel("/model.xlsx");
-      setSheets(sheets);
-      setActiveSheet(Object.keys(sheets)[0]);
+      try {
+        const { sheets } = await loadExcel("/model.xlsx");
+        setSheets(sheets);
+        setActiveSheet(Object.keys(sheets)[0]);
+      } catch (error) {
+        console.error("Error loading Excel file:", error);
+      }
     }
     fetchExcel();
   }, []);
@@ -65,10 +70,13 @@ function Home() {
       {/* Toolbar: Search + Visualization + Data Entry + Download */}
       <div className="toolbar">
         <SearchBar searchQuery={searchQuery} setSearchQuery={setSearchQuery} />
-        <Visualization onSelect={(type) => console.log("Chart:", type)} />
+        <Visualization 
+          onSelect={(type) => console.log("Chart:", type)}
+          sheetData={sheets[activeSheet] || []}
+          sheetName={activeSheet}
+        />
         <DataEntry
           sheetData={sheets[activeSheet]}
-          setSheet
           setSheetData={(newData) =>
             setSheets({ ...sheets, [activeSheet]: newData })
           }
