@@ -5,6 +5,65 @@
   background-color: #f8f9fa;
 }
 
+/* File Upload Section */
+.file-upload-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 15px;
+  background: #ffffff;
+  border-bottom: 1px solid #e0e0e0;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.03);
+}
+
+.file-info {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.file-info span {
+  color: #0077b6;
+  font-weight: 500;
+}
+
+.remove-file-btn {
+  padding: 6px 12px;
+  border: 1px solid #e63946;
+  border-radius: 4px;
+  background: #ffffff;
+  color: #e63946;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: all 0.2s ease;
+}
+
+.remove-file-btn:hover {
+  background: #e63946;
+  color: white;
+}
+
+.upload-btn-wrapper {
+  display: flex;
+  align-items: center;
+}
+
+.upload-btn {
+  padding: 8px 16px;
+  border: 1px solid #0077b6;
+  border-radius: 4px;
+  background: #ffffff;
+  color: #0077b6;
+  cursor: pointer;
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
+.upload-btn:hover {
+  background: #0077b6;
+  color: white;
+}
+
 /* Navbar */
 .navbar {
   display: flex;
@@ -44,22 +103,38 @@
   box-shadow: 0 2px 4px rgba(0, 119, 182, 0.2);
 }
 
-/* Toolbar */
-.toolbar {
+/* Horizontal Toolbar */
+.toolbar-horizontal {
   display: flex;
-  flex-wrap: wrap;
   gap: 15px;
   padding: 15px;
   background: #ffffff;
   border-bottom: 1px solid #e0e0e0;
   align-items: center;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.03);
+  flex-wrap: wrap;
+}
+
+.toolbar-horizontal > * {
+  flex: 1;
+  min-width: 200px;
+}
+
+/* Download Container */
+.dataentry-container {
+  padding: 0 15px 15px;
+  background: #ffffff;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.dataentry-container .download-btn {
+  width: 100%;
+  justify-content: center;
 }
 
 /* Search Bar */
 .search-container {
   flex: 1;
-  max-width: 300px;
 }
 
 .search-container input {
@@ -86,6 +161,7 @@
   color: #495057;
   cursor: pointer;
   transition: border-color 0.2s;
+  width: 100%;
 }
 
 .dropdown-container select:focus {
@@ -239,18 +315,24 @@
 
 /* Responsive Design */
 @media (max-width: 992px) {
-  .toolbar {
+  .toolbar-horizontal {
     gap: 10px;
   }
   
-  .search-container {
-    max-width: 250px;
+  .toolbar-horizontal > * {
+    min-width: 180px;
   }
 }
 
 @media (max-width: 768px) {
   .app-header h1 {
     font-size: 1.5rem;
+  }
+  
+  .file-upload-container {
+    flex-direction: column;
+    gap: 10px;
+    align-items: flex-start;
   }
   
   .navbar {
@@ -262,14 +344,14 @@
     font-size: 0.9rem;
   }
   
-  .toolbar {
+  .toolbar-horizontal {
     flex-direction: column;
     align-items: stretch;
     gap: 10px;
   }
   
-  .search-container {
-    max-width: 100%;
+  .toolbar-horizontal > * {
+    min-width: auto;
   }
   
   .table-container {
@@ -300,7 +382,9 @@
   
   .dropdown-container select,
   .search-container input,
-  .download-btn {
+  .download-btn,
+  .upload-btn,
+  .remove-file-btn {
     padding: 8px 10px;
     font-size: 0.9rem;
   }

@@ -1,4 +1,3 @@
-// Updated Home.jsx (only the relevant parts)
 import React, { useEffect, useState } from "react";
 import { loadExcel } from "../utils/excel";
 import SearchBar from "../components/SearchBar";
@@ -12,12 +11,15 @@ function Home() {
   const [activeSheet, setActiveSheet] = useState(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
+  const [customFile, setCustomFile] = useState(null);
+  const [fileName, setFileName] = useState("model.xlsx");
   const rowsPerPage = 20;
 
   useEffect(() => {
     async function fetchExcel() {
       try {
-        const { sheets } = await loadExcel("/model.xlsx");
+        const filePath = customFile ? URL.createObjectURL(customFile) : "/model.xlsx";
+        const { sheets } = await loadExcel(filePath);
         setSheets(sheets);
         setActiveSheet(Object.keys(sheets)[0]);
       } catch (error) {
@@ -25,7 +27,24 @@ function Home() {
       }
     }
     fetchExcel();
-  }, []);
+  }, [customFile]);
+
+  const handleFileUpload = (event) => {
+    const file = event.target.files[0];
+    if (file) {
+      setCustomFile(file);
+      setFileName(file.name);
+      setSearchQuery("");
+      setCurrentPage(1);
+    }
+  };
+
+  const removeUploadedFile = () => {
+    setCustomFile(null);
+    setFileName("model.xlsx");
+    setSearchQuery("");
+    setCurrentPage(1);
+  };
 
   if (!sheets) return <p>Loading Excel...</p>;
 
@@ -48,6 +67,30 @@ function Home() {
 
   return (
     <div className="home-container">
+      {/* File Upload Section */}
+      <div className="file-upload-container">
+        <div className="file-info">
+          <span>Current file: {fileName}</span>
+          {customFile && (
+            <button className="remove-file-btn" onClick={removeUploadedFile}>
+              Remove Uploaded File
+            </button>
+          )}
+        </div>
+        <div className="upload-btn-wrapper">
+          <label htmlFor="file-upload" className="upload-btn">
+            Upload Excel File
+          </label>
+          <input
+            id="file-upload"
+            type="file"
+            accept=".xlsx, .xls"
+            onChange={handleFileUpload}
+            style={{ display: "none" }}
+          />
+        </div>
+      </div>
+
       {/* Navbar */}
       <div className="navbar">
         {Object.keys(sheets).map((sheetName) => (
@@ -67,21 +110,25 @@ function Home() {
         ))}
       </div>
 
-      {/* Toolbar: Search + Visualization + Data Entry + Download */}
-      <div className="toolbar">
+      {/* Toolbar: Search + Visualization + Data Entry */}
+      <div className="toolbar-horizontal">
         <SearchBar searchQuery={searchQuery} setSearchQuery={setSearchQuery} />
         <Visualization 
           onSelect={(type) => console.log("Chart:", type)}
           sheetData={sheets[activeSheet] || []}
           sheetName={activeSheet}
         />
-        <DataEntry
+        <DownloadButton sheets={sheets} />
+      </div>
+
+      {/* Download Button - Full Width */}
+      <div className="dataentry-container">
+      <DataEntry
           sheetData={sheets[activeSheet]}
           setSheetData={(newData) =>
             setSheets({ ...sheets, [activeSheet]: newData })
           }
         />
-        <DownloadButton sheets={sheets} />
       </div>
 
       {/* Table */}
