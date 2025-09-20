@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { loadExcel } from "../utils/excel";
 import SearchBar from "../components/SearchBar";
-import Visualization from "../components/Visualization";
+import Visualization from "../components/visualization/Visualization";
 import DataEntry from "../components/DataEntry";
 import DownloadButton from "../components/DownloadButton";
 import "./Home.css";
@@ -13,17 +13,21 @@ function Home() {
   const [currentPage, setCurrentPage] = useState(1);
   const [customFile, setCustomFile] = useState(null);
   const [fileName, setFileName] = useState("model.xlsx");
+  const [isDataLoaded, setIsDataLoaded] = useState(false);
   const rowsPerPage = 20;
 
   useEffect(() => {
     async function fetchExcel() {
       try {
+        setIsDataLoaded(false);
         const filePath = customFile ? URL.createObjectURL(customFile) : "/model.xlsx";
         const { sheets } = await loadExcel(filePath);
         setSheets(sheets);
         setActiveSheet(Object.keys(sheets)[0]);
+        setIsDataLoaded(true);
       } catch (error) {
         console.error("Error loading Excel file:", error);
+        setIsDataLoaded(true);
       }
     }
     fetchExcel();
@@ -46,9 +50,9 @@ function Home() {
     setCurrentPage(1);
   };
 
-  if (!sheets) return <p>Loading Excel...</p>;
+  if (!sheets && !isDataLoaded) return <p>Loading Excel...</p>;
 
-  let data = sheets[activeSheet] || [];
+  let data = sheets && sheets[activeSheet] ? sheets[activeSheet] : [];
 
   // 🔍 Search
   const filteredData = data.filter((row) =>
@@ -93,7 +97,7 @@ function Home() {
 
       {/* Navbar */}
       <div className="navbar">
-        {Object.keys(sheets).map((sheetName) => (
+        {sheets && Object.keys(sheets).map((sheetName) => (
           <button
             key={sheetName}
             onClick={() => {
@@ -115,7 +119,7 @@ function Home() {
         <SearchBar searchQuery={searchQuery} setSearchQuery={setSearchQuery} />
         <Visualization 
           onSelect={(type) => console.log("Chart:", type)}
-          sheetData={sheets[activeSheet] || []}
+          sheetData={sheets && sheets[activeSheet] ? sheets[activeSheet] : []}
           sheetName={activeSheet}
         />
         <DownloadButton sheets={sheets} />
@@ -123,8 +127,8 @@ function Home() {
 
       {/* Download Button - Full Width */}
       <div className="dataentry-container">
-      <DataEntry
-          sheetData={sheets[activeSheet]}
+        <DataEntry
+          sheetData={sheets && sheets[activeSheet] ? sheets[activeSheet] : []}
           setSheetData={(newData) =>
             setSheets({ ...sheets, [activeSheet]: newData })
           }
@@ -133,11 +137,11 @@ function Home() {
 
       {/* Table */}
       <div className="table-container">
-        <h2>{activeSheet}</h2>
+        <h2>{activeSheet || "No Sheet Selected"}</h2>
         <table>
           <thead>
             <tr>
-              {Object.keys(data[0] || {}).map((col) => (
+              {data.length > 0 && Object.keys(data[0] || {}).map((col) => (
                 <th key={col}>{col}</th>
               ))}
             </tr>
@@ -145,7 +149,7 @@ function Home() {
           <tbody>
             {paginatedData.map((row, i) => (
               <tr key={i}>
-                {Object.values(row).map((val, j) => (
+                {data.length > 0 && Object.values(row).map((val, j) => (
                   <td key={j}>{val}</td>
                 ))}
               </tr>
@@ -157,7 +161,7 @@ function Home() {
       {/* Pagination */}
       <div className="pagination">
         <button
-          disabled={currentPage === 1}
+          disabled={currentPage === 1 || filteredData.length === 0}
           onClick={() => setCurrentPage((p) => p - 1)}
         >
           ◀ Prev
@@ -166,7 +170,7 @@ function Home() {
           Page {currentPage} of {totalPages || 1}
         </span>
         <button
-          disabled={currentPage === totalPages}
+          disabled={currentPage === totalPages || filteredData.length === 0}
           onClick={() => setCurrentPage((p) => p + 1)}
         >
           Next ▶
