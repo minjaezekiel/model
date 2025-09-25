@@ -1,6 +1,6 @@
 // Updated Visualization.jsx
 import React, { useState, useEffect } from "react";
-import VisualizationModal from "./VisualizationModal";
+import VisualizationModal from "./components/VisualizationModal";
 import "./Visualization.css";
 
 function Visualization({ onSelect, sheetData, sheetName }) {

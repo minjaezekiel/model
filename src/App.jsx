@@ -7,6 +7,7 @@ function App() {
     <div className="app">
       <header className="app-header">
         <h1>TZ INFORM Model Viewer</h1>
+        <p>Tanzania District Data Visualization Platform</p>
       </header>
       <Home />
     </div>

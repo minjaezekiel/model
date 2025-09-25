@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { loadExcel } from "../utils/excel";
 import SearchBar from "../components/SearchBar";
-import Visualization from "../components/Visualization";
+import Visualization from "../components/visualization/Visualization";
 import DataEntry from "../components/DataEntry";
 import DownloadButton from "../components/DownloadButton";
 import "./Home.css";
@@ -13,17 +13,21 @@ function Home() {
   const [currentPage, setCurrentPage] = useState(1);
   const [customFile, setCustomFile] = useState(null);
   const [fileName, setFileName] = useState("model.xlsx");
+  const [isDataLoaded, setIsDataLoaded] = useState(false);
   const rowsPerPage = 20;
 
   useEffect(() => {
     async function fetchExcel() {
       try {
+        setIsDataLoaded(false);
         const filePath = customFile ? URL.createObjectURL(customFile) : "/model.xlsx";
         const { sheets } = await loadExcel(filePath);
         setSheets(sheets);
         setActiveSheet(Object.keys(sheets)[0]);
+        setIsDataLoaded(true);
       } catch (error) {
         console.error("Error loading Excel file:", error);
+        setIsDataLoaded(true);
       }
     }
     fetchExcel();
@@ -46,9 +50,41 @@ function Home() {
     setCurrentPage(1);
   };
 
-  if (!sheets) return <p>Loading Excel...</p>;
+  // Filter data for Tanzania if it contains multiple countries
+  const getTanzaniaData = () => {
+    if (!sheets || !activeSheet) return [];
+    
+    const data = sheets[activeSheet];
+    if (!data || data.length === 0) return [];
+    
+    // Check if data contains Tanzania-specific columns or if it's already filtered
+    const hasTanzaniaData = data.some(row => 
+      row.COUNTRY === 'United Republic of Tanzania' || 
+      row.ISO3 === 'TZA' ||
+      (row.ADM1_NAME && typeof row.ADM1_NAME === 'string' && 
+       ['Dodoma', 'Arusha', 'Kilimanjaro', 'Tanga', 'Morogoro', 'Pwani', 
+        'Dar-es-salaam', 'Lindi', 'Mtwara', 'Ruvuma', 'Iringa', 'Mbeya', 
+        'Singida', 'Tabora', 'Rukwa', 'Kigoma', 'Shinyanga', 'Kagera', 
+        'Mwanza', 'Mara', 'Manyara', 'Njombe', 'Katavi', 'Simiyu', 'Geita', 
+        'Songwe', 'Kaskazini Unguja', 'Kusini Unguja', 'Mjini Magharibi', 
+        'Kaskazini Pemba', 'Kusini Pemba'].some(region => row.ADM1_NAME.includes(region)))
+    );
+    
+    if (hasTanzaniaData) {
+      return data.filter(row => 
+        row.COUNTRY === 'United Republic of Tanzania' || 
+        row.ISO3 === 'TZA' ||
+        !row.COUNTRY // If no country column, assume it's Tanzania data
+      );
+    }
+    
+    return data;
+  };
 
-  let data = sheets[activeSheet] || [];
+  if (!sheets && !isDataLoaded) return <p>Loading Excel...</p>;
+
+  const tanzaniaData = getTanzaniaData();
+  const data = tanzaniaData.length > 0 ? tanzaniaData : (sheets && sheets[activeSheet] ? sheets[activeSheet] : []);
 
   // 🔍 Search
   const filteredData = data.filter((row) =>
@@ -93,7 +129,7 @@ function Home() {
 
       {/* Navbar */}
       <div className="navbar">
-        {Object.keys(sheets).map((sheetName) => (
+        {sheets && Object.keys(sheets).map((sheetName) => (
           <button
             key={sheetName}
             onClick={() => {
@@ -115,16 +151,16 @@ function Home() {
         <SearchBar searchQuery={searchQuery} setSearchQuery={setSearchQuery} />
         <Visualization 
           onSelect={(type) => console.log("Chart:", type)}
-          sheetData={sheets[activeSheet] || []}
+          sheetData={data}
           sheetName={activeSheet}
         />
         <DownloadButton sheets={sheets} />
       </div>
 
-      {/* Download Button - Full Width */}
+      {/* Data Entry Section */}
       <div className="dataentry-container">
-      <DataEntry
-          sheetData={sheets[activeSheet]}
+        <DataEntry
+          sheetData={data}
           setSheetData={(newData) =>
             setSheets({ ...sheets, [activeSheet]: newData })
           }
@@ -133,11 +169,11 @@ function Home() {
 
       {/* Table */}
       <div className="table-container">
-        <h2>{activeSheet}</h2>
+        <h2>{activeSheet || "No Sheet Selected"} {tanzaniaData.length > 0 ? `(Tanzania Data - ${tanzaniaData.length} records)` : ''}</h2>
         <table>
           <thead>
             <tr>
-              {Object.keys(data[0] || {}).map((col) => (
+              {data.length > 0 && Object.keys(data[0] || {}).map((col) => (
                 <th key={col}>{col}</th>
               ))}
             </tr>
@@ -145,7 +181,7 @@ function Home() {
           <tbody>
             {paginatedData.map((row, i) => (
               <tr key={i}>
-                {Object.values(row).map((val, j) => (
+                {data.length > 0 && Object.values(row).map((val, j) => (
                   <td key={j}>{val}</td>
                 ))}
               </tr>
@@ -157,7 +193,7 @@ function Home() {
       {/* Pagination */}
       <div className="pagination">
         <button
-          disabled={currentPage === 1}
+          disabled={currentPage === 1 || filteredData.length === 0}
           onClick={() => setCurrentPage((p) => p - 1)}
         >
           ◀ Prev
@@ -166,7 +202,7 @@ function Home() {
           Page {currentPage} of {totalPages || 1}
         </span>
         <button
-          disabled={currentPage === totalPages}
+          disabled={currentPage === totalPages || filteredData.length === 0}
           onClick={() => setCurrentPage((p) => p + 1)}
         >
           Next ▶

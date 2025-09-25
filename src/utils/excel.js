@@ -6,14 +6,31 @@ function isEmptyRow(row) {
   return Object.values(row).every((val) => val === "" || val === null || val === undefined);
 }
 
-// Helper: remove empty rows and columns
+// Helper: check if all headers in a row are empty
+function isEmptyHeaderRow(row) {
+  return Object.values(row).every((val) => 
+    val === "" || val === null || val === undefined || 
+    String(val).trim() === "" || String(val).startsWith('__EMPTY')
+  );
+}
+
+// Helper: remove empty rows and columns, and handle empty headers
 function cleanSheetData(data) {
-  // 1. Remove empty rows
-  let cleanedRows = data.filter((row) => !isEmptyRow(row));
+  if (data.length === 0) return [];
+
+  // 1. Check if the first row has empty headers
+  let startRowIndex = 0;
+  if (data.length > 0 && isEmptyHeaderRow(data[0])) {
+    // Use the second row as headers and remove the first row
+    startRowIndex = 1;
+  }
+
+  // 2. Remove empty rows from the remaining data
+  let cleanedRows = data.slice(startRowIndex).filter((row) => !isEmptyRow(row));
 
   if (cleanedRows.length === 0) return [];
 
-  // 2. Find non-empty columns
+  // 3. Find non-empty columns
   const nonEmptyColumns = new Set();
   cleanedRows.forEach((row) => {
     Object.entries(row).forEach(([key, val]) => {
@@ -23,7 +40,7 @@ function cleanSheetData(data) {
     });
   });
 
-  // 3. Keep only non-empty columns
+  // 4. Keep only non-empty columns
   cleanedRows = cleanedRows.map((row) => {
     const newRow = {};
     [...nonEmptyColumns].forEach((col) => {
@@ -46,8 +63,46 @@ export async function loadExcel(filePath) {
   workbook.SheetNames.forEach((name) => {
     const rawData = XLSX.utils.sheet_to_json(workbook.Sheets[name], {
       defval: "", // keep empty cells
+      header: 1, // Use array format to preserve row order for header checking
     });
-    sheets[name] = cleanSheetData(rawData); // Clean rows & columns
+    
+    // Convert array format back to object format after header processing
+    let processedData = [];
+    if (rawData.length > 0) {
+      // Check if first row has empty headers
+      let headers = rawData[0];
+      let dataStartIndex = 0;
+      
+      // If first row has empty headers, use second row as headers
+      if (headers.every(header => 
+        !header || header === "" || header === null || header === undefined || 
+        String(header).trim() === "" || String(header).startsWith('__EMPTY')
+      )) {
+        if (rawData.length > 1) {
+          headers = rawData[1];
+          dataStartIndex = 2;
+        }
+      } else {
+        dataStartIndex = 1;
+      }
+      
+      // Convert to object format
+      for (let i = dataStartIndex; i < rawData.length; i++) {
+        const row = {};
+        for (let j = 0; j < headers.length; j++) {
+          if (headers[j] !== undefined && headers[j] !== null && headers[j] !== "") {
+            // Clean header names by removing __EMPTY prefixes
+            const cleanHeader = String(headers[j]).replace(/^__EMPTY(_\d+)?/, '').trim() || `column_${j+1}`;
+            row[cleanHeader] = rawData[i][j];
+          }
+        }
+        if (!isEmptyRow(row)) {
+          processedData.push(row);
+        }
+      }
+    }
+    
+    sheets[name] = processedData;
   });
 
   return { workbook, sheets };
