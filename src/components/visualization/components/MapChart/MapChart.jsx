@@ -10,6 +10,8 @@ function MapChart({ sheetData = [] }) {
   const [dataColumn, setDataColumn] = useState('');
   const [districtData, setDistrictData] = useState(null);
   const [availableColumns, setAvailableColumns] = useState([]);
+  const [hoverPopup, setHoverPopup] = useState(null);
+  const [popupPosition, setPopupPosition] = useState({ x: 0, y: 0 });
 
   // Extract available columns from sheet data
   useEffect(() => {
@@ -52,16 +54,64 @@ function MapChart({ sheetData = [] }) {
       setSelectedRegion(null);
       setSelectedDistrict(null);
       setDistrictData(null);
+      setHoverPopup(null);
     } else {
       setExpandedRegion(region.name);
       setSelectedRegion(region);
       setSelectedDistrict(null);
       setDistrictData(null);
+      setHoverPopup(null);
     }
   };
 
   const handleDistrictClick = (district) => {
     setSelectedDistrict(district);
+    setHoverPopup(null);
+  };
+
+  const handleMapMarkerHover = (location, isDistrict = false) => {
+    if (!sheetData || sheetData.length === 0 || !dataColumn) return;
+
+    let locationData = null;
+    
+    if (isDistrict && selectedRegion) {
+      // Find district data
+      locationData = sheetData.find(row => 
+        row.ADM2_NAME === location.name && 
+        row.ADM1_NAME === selectedRegion.name
+      );
+    } else if (!isDistrict) {
+      // Find region data (try to find any district in this region)
+      locationData = sheetData.find(row => 
+        row.ADM1_NAME === location.name
+      );
+    }
+
+    if (locationData) {
+      setHoverPopup({
+        title: location.name,
+        data: locationData[dataColumn] || 'No data',
+        dataColumn: dataColumn,
+        isDistrict: isDistrict,
+        region: isDistrict ? selectedRegion.name : null
+      });
+    } else {
+      setHoverPopup({
+        title: location.name,
+        data: 'No data available',
+        dataColumn: dataColumn,
+        isDistrict: isDistrict,
+        region: isDistrict ? selectedRegion.name : null
+      });
+    }
+  };
+
+  const handleMapMarkerLeave = () => {
+    setHoverPopup(null);
+  };
+
+  const handleMouseMove = (e) => {
+    setPopupPosition({ x: e.clientX, y: e.clientY });
   };
 
   const getEmbedUrl = () => {
@@ -75,11 +125,38 @@ function MapChart({ sheetData = [] }) {
     return 'https://www.openstreetmap.org/export/embed.html?bbox=29.0%2C-11.8%2C40.5%2C-0.9&layer=mapnik&marker=-6.3690%2C34.8888';
   };
 
+  // Add custom markers with hover effects
+  const addCustomMarkers = () => {
+    if (!selectedRegion && !selectedDistrict) return '';
+    
+    let markers = '';
+    
+    if (selectedDistrict) {
+      // Add district marker
+      markers += `&marker=${selectedDistrict.lat}%2C${selectedDistrict.lng}`;
+    } else if (selectedRegion) {
+      // Add region marker and all district markers in the region
+      markers += `&marker=${selectedRegion.lat}%2C${selectedRegion.lng}`;
+      
+      selectedRegion.districts.forEach(district => {
+        markers += `&marker=${district.lat}%2C${district.lng}`;
+      });
+    }
+    
+    return markers;
+  };
+
+  const getEnhancedEmbedUrl = () => {
+    let baseUrl = getEmbedUrl();
+    const markers = addCustomMarkers();
+    return baseUrl + markers;
+  };
+
   return (
-    <div className="map-chart-container">
+    <div className="map-chart-container" onMouseMove={handleMouseMove}>
       <div className="map-header">
         <h2>Tanzania Districts Map</h2>
-        <p>Select a region and district to view data from Excel</p>
+        <p>Select a region and district to view data from Excel • Hover over map markers to see data popups</p>
       </div>
 
       {/* Data Column Selector */}
@@ -107,6 +184,8 @@ function MapChart({ sheetData = [] }) {
                 <div
                   className={`region-item ${selectedRegion?.name === region.name ? 'selected' : ''}`}
                   onClick={() => handleRegionClick(region)}
+                  onMouseEnter={() => handleMapMarkerHover(region, false)}
+                  onMouseLeave={handleMapMarkerLeave}
                 >
                   {region.name}
                   <span className="toggle-icon">
@@ -122,6 +201,8 @@ function MapChart({ sheetData = [] }) {
                           key={district.name}
                           className={`district-item ${selectedDistrict?.name === district.name ? 'selected' : ''}`}
                           onClick={() => handleDistrictClick(district)}
+                          onMouseEnter={() => handleMapMarkerHover(district, true)}
+                          onMouseLeave={handleMapMarkerLeave}
                         >
                           {district.name}
                         </div>
@@ -142,7 +223,7 @@ function MapChart({ sheetData = [] }) {
             scrolling="no"
             marginHeight="0"
             marginWidth="0"
-            src={getEmbedUrl()}
+            src={getEnhancedEmbedUrl()}
             title="Tanzania Map"
             className="osm-iframe"
           />
@@ -153,6 +234,29 @@ function MapChart({ sheetData = [] }) {
           </div>
         </div>
       </div>
+
+      {/* Hover Popup */}
+      {hoverPopup && (
+        <div 
+          className="map-hover-popup"
+          style={{
+            position: 'fixed',
+            left: `${popupPosition.x + 15}px`,
+            top: `${popupPosition.y + 15}px`,
+            zIndex: 1000
+          }}
+        >
+          <div className="popup-content">
+            <h4>{hoverPopup.title}</h4>
+            {hoverPopup.isDistrict && hoverPopup.region && (
+              <p className="popup-region">Region: {hoverPopup.region}</p>
+            )}
+            <p className="popup-data">
+              <strong>{hoverPopup.dataColumn}:</strong> {hoverPopup.data}
+            </p>
+          </div>
+        </div>
+      )}
 
       {(selectedRegion || selectedDistrict) && (
         <div className="location-info">
@@ -178,6 +282,12 @@ function MapChart({ sheetData = [] }) {
               <h3>{selectedRegion.name} Region</h3>
               <p>Coordinates: {selectedRegion.lat.toFixed(4)}, {selectedRegion.lng.toFixed(4)}</p>
               <p>Districts: {selectedRegion.districts.length}</p>
+              {sheetData && sheetData.length > 0 && dataColumn && (
+                <div className="district-data">
+                  <h4>Region Data Preview</h4>
+                  <p><em>Hover over districts in the list to see their data</em></p>
+                </div>
+              )}
             </>
           )}
         </div>

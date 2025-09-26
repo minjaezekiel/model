@@ -252,3 +252,66 @@
     height: 300px;
   }
 }
+
+/* MapChart.css - Add these styles to the existing file */
+
+.map-hover-popup {
+  background: white;
+  border: 2px solid #0077b6;
+  border-radius: 8px;
+  padding: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  max-width: 250px;
+  pointer-events: none;
+}
+
+.popup-content h4 {
+  margin: 0 0 8px 0;
+  color: #0077b6;
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.popup-region {
+  margin: 0 0 6px 0;
+  font-size: 0.85rem;
+  color: #666;
+  font-style: italic;
+}
+
+.popup-data {
+  margin: 0;
+  font-size: 0.9rem;
+  color: #333;
+}
+
+.popup-data strong {
+  color: #0077b6;
+}
+
+/* Ensure the popup doesn't overflow the screen */
+.map-hover-popup {
+  max-width: 280px;
+  word-wrap: break-word;
+}
+
+/* Add a small arrow to the popup */
+.map-hover-popup::before {
+  content: '';
+  position: absolute;
+  top: -10px;
+  left: 20px;
+  border-width: 0 10px 10px 10px;
+  border-style: solid;
+  border-color: transparent transparent #0077b6 transparent;
+}
+
+.map-hover-popup::after {
+  content: '';
+  position: absolute;
+  top: -7px;
+  left: 21px;
+  border-width: 0 9px 9px 9px;
+  border-style: solid;
+  border-color: transparent transparent white transparent;
+}
