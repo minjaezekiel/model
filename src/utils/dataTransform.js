@@ -55,24 +55,43 @@ export const getNumericColumns = (data) => {
 };
 
 // Transform data for visualization
+// Improve the transformDataForVisualization function
 export const transformDataForVisualization = (data, xColumn, yColumn) => {
   if (!data || !xColumn || !yColumn) {
     console.log("Missing data or columns for transformation");
     return [];
   }
   
-  return data
-    .filter(item => item[xColumn] !== undefined && item[yColumn] !== undefined)
+  console.log(`Transforming data: ${xColumn} vs ${yColumn}`);
+  console.log('Sample data:', data.slice(0, 3));
+  
+  const transformed = data
+    .filter(item => {
+      const hasX = item[xColumn] !== undefined && item[xColumn] !== null && item[xColumn] !== '';
+      const hasY = item[yColumn] !== undefined && item[yColumn] !== null && item[yColumn] !== '';
+      return hasX && hasY;
+    })
     .map(item => {
       const xValue = item[xColumn];
       const yValue = item[yColumn];
       
+      // Convert yValue to number if possible
+      let numericValue;
+      if (isConvertibleToNumber(yValue)) {
+        numericValue = convertToNumberIfPossible(yValue);
+      } else {
+        numericValue = 0; // Default to 0 if not convertible
+      }
+      
       return {
-        name: xValue !== null && xValue !== undefined ? String(xValue) : '',
-        value: isConvertibleToNumber(yValue) ? convertToNumberIfPossible(yValue) : 0
+        name: String(xValue || ''),
+        value: numericValue
       };
     })
-    .filter(item => item.name !== null && item.name !== undefined && item.name !== '');
+    .filter(item => item.name && item.name.trim() !== '');
+  
+  console.log('Transformed data:', transformed);
+  return transformed;
 };
 
 // Function to extract unique values for categorical data

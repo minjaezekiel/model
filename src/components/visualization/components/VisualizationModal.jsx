@@ -8,16 +8,16 @@ import {
   getAllColumns
 } from '../../../utils/dataTransform';
 import ChartControls from './ChartControls';
-import DataPreview from './DataPreview';
 import BarChart from './BarChart';
 import LineChart from './LineChart';
-import PieChart from './PieChart';
 import ScatterChart from './ScatterChart';
+import AreaChart from './AreaChart';
 import MapChart from './MapChart/MapChart';
+import DashboardView from './DashboardView';
 import './VisualizationModal.css';
 
 function VisualizationModal({ data, columns, isOpen, onClose, chartType: initialChartType }) {
-  const [chartType, setChartType] = useState(initialChartType || 'bar');
+  const [currentView, setCurrentView] = useState(initialChartType || 'dashboard');
   const [xAxisColumn, setXAxisColumn] = useState('');
   const [yAxisColumn, setYAxisColumn] = useState('');
   const [aggregationType, setAggregationType] = useState('sum');
@@ -27,15 +27,11 @@ function VisualizationModal({ data, columns, isOpen, onClose, chartType: initial
   const [allColumns, setAllColumns] = useState([]);
 
   useEffect(() => {
-    console.log("Modal received columns:", columns);
-    console.log("Modal received data:", data);
-    
     if (columns && columns.length > 0) {
       const cols = getAllColumns(data);
       setAllColumns(cols);
       setXAxisColumn(cols[0]);
       
-      // Find numeric columns for Y-axis
       const numericCols = getNumericColumns(data);
       setNumericColumns(numericCols);
       
@@ -48,17 +44,16 @@ function VisualizationModal({ data, columns, isOpen, onClose, chartType: initial
   }, [columns, data]);
 
   useEffect(() => {
-    if (xAxisColumn && yAxisColumn && data && data.length > 0 && chartType !== 'map') {
+    if (xAxisColumn && yAxisColumn && data && data.length > 0 && currentView !== 'dashboard' && currentView !== 'map') {
       updateChartData();
     }
-  }, [xAxisColumn, yAxisColumn, data, chartType, aggregationType]);
+  }, [xAxisColumn, yAxisColumn, data, currentView, aggregationType]);
 
   const updateChartData = () => {
     try {
       let transformedData = [];
       let chartTitle = `${yAxisColumn} by ${xAxisColumn}`;
       
-      // For standard charts, use aggregation if needed
       if (aggregationType !== 'none' && !isConvertibleToNumber(data[0][xAxisColumn])) {
         transformedData = aggregateData(data, xAxisColumn, yAxisColumn, aggregationType);
         chartTitle = `${aggregationType} of ${yAxisColumn} by ${xAxisColumn}`;
@@ -67,20 +62,52 @@ function VisualizationModal({ data, columns, isOpen, onClose, chartType: initial
       }
       
       setChartData(transformedData);
-      setTitle(chartTitle);
-      console.log("Chart data transformed:", transformedData);
     } catch (error) {
       console.error("Error updating chart data:", error);
     }
   };
 
-  const handleChartTypeChange = (newChartType) => {
-    setChartType(newChartType);
+  const handleViewChart = (chartType, xCol, yCol, aggType) => {
+    setCurrentView(chartType);
+    if (xCol) setXAxisColumn(xCol);
+    if (yCol) setYAxisColumn(yCol);
+    if (aggType) setAggregationType(aggType);
+  };
+
+  const handleViewMap = () => {
+    setCurrentView('map');
+  };
+
+  const handleBackToDashboard = () => {
+    setCurrentView('dashboard');
   };
 
   const getChartComponent = () => {
-    if (chartType === 'map') {
-      return <MapChart sheetData={data} />;
+    if (currentView === 'map') {
+      return (
+        <div className="single-chart-view">
+          <div className="chart-header">
+            <button className="back-btn" onClick={handleBackToDashboard}>
+              ← Back to Dashboard
+            </button>
+            <h3>Tanzania Map</h3>
+          </div>
+          <MapChart sheetData={data} />
+        </div>
+      );
+    }
+
+    if (currentView === 'dashboard') {
+      return (
+        <DashboardView
+          data={data}
+          columns={allColumns}
+          isOpen={true}
+          onClose={onClose}
+          onViewChart={handleViewChart}
+          onViewMap={handleViewMap}
+        />
+      );
     }
 
     const props = {
@@ -90,21 +117,34 @@ function VisualizationModal({ data, columns, isOpen, onClose, chartType: initial
       yAxisColumn
     };
 
-    switch (chartType) {
-      case 'bar':
-        return <BarChart {...props} />;
-      case 'line':
-        return <LineChart {...props} />;
-      case 'pie':
-        return <PieChart {...props} />;
-      case 'scatter':
-        return <ScatterChart {...props} />;
-      default:
-        return <BarChart {...props} />;
-    }
+    const chartComponents = {
+      'bar': BarChart,
+      'line': LineChart,
+      'scatter': ScatterChart,
+      'area': AreaChart
+    };
+
+    const ChartComponent = chartComponents[currentView] || BarChart;
+
+    return (
+      <div className="single-chart-view">
+        <div className="chart-header">
+          <button className="back-btn" onClick={handleBackToDashboard}>
+            ← Back to Dashboard
+          </button>
+
+        </div>
+        <ChartComponent {...props} />
+      </div>
+    );
   };
 
   if (!isOpen) return null;
+
+  // If it's dashboard or single chart view, render accordingly
+  if (currentView === 'dashboard') {
+    return getChartComponent();
+  }
 
   return (
     <div className="visualization-modal">
@@ -114,37 +154,24 @@ function VisualizationModal({ data, columns, isOpen, onClose, chartType: initial
           <button className="close-btn" onClick={onClose}>×</button>
         </div>
         
-        <ChartControls
-          chartType={chartType}
-          handleChartTypeChange={handleChartTypeChange}
-          xAxisColumn={xAxisColumn}
-          setXAxisColumn={setXAxisColumn}
-          yAxisColumn={yAxisColumn}
-          setYAxisColumn={setYAxisColumn}
-          aggregationType={aggregationType}
-          setAggregationType={setAggregationType}
-          columns={allColumns}
-          numericColumns={numericColumns}
-          showAggregation={chartType !== 'map'}
-        />
-        
-        {chartType !== 'map' && (
-          <DataPreview 
-            chartData={chartData}
+        {currentView !== 'map' && currentView !== 'dashboard' && (
+          <ChartControls
+            chartType={currentView}
+            handleChartTypeChange={setCurrentView}
             xAxisColumn={xAxisColumn}
+            setXAxisColumn={setXAxisColumn}
             yAxisColumn={yAxisColumn}
+            setYAxisColumn={setYAxisColumn}
+            aggregationType={aggregationType}
+            setAggregationType={setAggregationType}
+            columns={allColumns}
+            numericColumns={numericColumns}
+            showAggregation={currentView !== 'map'}
           />
         )}
         
         <div className="chart-container">
-          {chartType === 'map' || chartData.length > 0 ? (
-            getChartComponent()
-          ) : (
-            <div className="no-data">
-              <p>No data available for visualization</p>
-              <p>Please check your column selections and ensure your data contains values</p>
-            </div>
-          )}
+          {getChartComponent()}
         </div>
       </div>
     </div>

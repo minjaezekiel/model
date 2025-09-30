@@ -154,10 +154,6 @@ function MapChart({ sheetData = [] }) {
 
   return (
     <div className="map-chart-container" onMouseMove={handleMouseMove}>
-      <div className="map-header">
-        <h2>Tanzania Districts Map</h2>
-        <p>Select a region and district to view data from Excel • Hover over map markers to see data popups</p>
-      </div>
 
       {/* Data Column Selector */}
       {sheetData && sheetData.length > 0 && (
@@ -285,7 +281,6 @@ function MapChart({ sheetData = [] }) {
               {sheetData && sheetData.length > 0 && dataColumn && (
                 <div className="district-data">
                   <h4>Region Data Preview</h4>
-                  <p><em>Hover over districts in the list to see their data</em></p>
                 </div>
               )}
             </>

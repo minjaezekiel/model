@@ -23,14 +23,15 @@ function ChartControls({
           onChange={(e) => handleChartTypeChange(e.target.value)}
         >
           <option value="bar">Bar Chart</option>
-          <option value="line">Line Chart</option>
+          <option value="line">Line Graph</option>
           <option value="pie">Pie Chart</option>
           <option value="scatter">Scatter Plot</option>
+          <option value="area">Area Graph</option>
           <option value="map">Tanzania Map</option>
         </select>
       </div>
 
-      {chartType !== 'map' && (
+      {chartType !== 'map' && chartType !== 'dashboard' && (
         <>
           <div className="control-group">
             <label htmlFor="x-axis">X-Axis Column</label>
