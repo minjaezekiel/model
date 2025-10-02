@@ -1,3 +1,4 @@
+// DashboardView.jsx
 import React, { useState, useEffect } from 'react';
 import { 
   getNumericColumns,
@@ -13,8 +14,8 @@ import MapChart from './MapChart/MapChart';
 import './DashboardView.css';
 
 function DashboardView({ data, columns, isOpen, onClose, onViewChart, onViewMap }) {
-  const [xAxisColumn, setXAxisColumn] = useState('');
-  const [yAxisColumn, setYAxisColumn] = useState('');
+  const [xAxisColumn, setXAxisColumn] = useState('COUNTRY');
+  const [yAxisColumn, setYAxisColumn] = useState('ADM1_PCODE');
   const [aggregationType, setAggregationType] = useState('sum');
   const [numericColumns, setNumericColumns] = useState([]);
   const [allColumns, setAllColumns] = useState([]);
@@ -24,12 +25,20 @@ function DashboardView({ data, columns, isOpen, onClose, onViewChart, onViewMap 
     if (columns && columns.length > 0 && data && data.length > 0) {
       const cols = getAllColumns(data);
       setAllColumns(cols);
-      setXAxisColumn(cols[0]);
+      
+      // Set default values
+      if (cols.includes('COUNTRY')) {
+        setXAxisColumn('COUNTRY');
+      } else if (cols.length > 0) {
+        setXAxisColumn(cols[0]);
+      }
       
       const numericCols = getNumericColumns(data);
       setNumericColumns(numericCols);
       
-      if (numericCols.length > 0) {
+      if (cols.includes('ADM1_PCODE')) {
+        setYAxisColumn('ADM1_PCODE');
+      } else if (numericCols.length > 0) {
         setYAxisColumn(numericCols[0]);
       } else if (cols.length > 1) {
         setYAxisColumn(cols[1]);
@@ -81,7 +90,7 @@ function DashboardView({ data, columns, isOpen, onClose, onViewChart, onViewMap 
           <button className="dashboard-close-btn" onClick={onClose}>×</button>
         </div>
         
-        {/* Controls Section */}
+        {/* Controls Section - Centered */}
         <div className="dashboard-controls">
           <div className="control-group">
             <label htmlFor="dashboard-x-axis">X-Axis Column</label>
