@@ -1,4 +1,6 @@
-/* MapChart.css */
+/* MapChart.css - Modularized for sub-components */
+
+/* Main Container */
 .map-chart-container {
   width: 100%;
   height: 600px;
@@ -23,6 +25,7 @@
   font-size: 0.9rem;
 }
 
+/* Data Column Selector */
 .data-column-selector {
   text-align: center;
   margin-bottom: 15px;
@@ -46,13 +49,15 @@
   min-width: 200px;
 }
 
+/* Map Content Layout */
 .map-content {
   display: flex;
   height: 450px;
   gap: 15px;
 }
 
-.regions-sidebar {
+/* Sidebar Styles */
+.sidebar-container {
   width: 250px;
   background: #f8f9fa;
   border-radius: 8px;
@@ -62,7 +67,7 @@
   flex-direction: column;
 }
 
-.regions-sidebar h3 {
+.sidebar-container h3 {
   margin: 0 0 15px 0;
   color: #0077b6;
   font-size: 1.1rem;
@@ -141,535 +146,18 @@
   border-color: #0077b6;
 }
 
-.map-display {
+/* Map Display Styles */
+.map-display-container {
   flex: 1;
   border-radius: 8px;
   overflow: hidden;
   position: relative;
   border: 1px solid #e0e0e0;
+  height: 100%;
 }
 
 .osm-iframe {
   border-radius: 8px;
-}
-
-.map-attribution {
-  position: absolute;
-  bottom: 10px;
-  right: 10px;
-  background: rgba(255, 255, 255, 0.9);
-  padding: 5px 10px;
-  border-radius: 4px;
-  font-size: 0.8rem;
-}
-
-.map-attribution a {
-  color: #0077b6;
-  text-decoration: none;
-}
-
-.map-attribution a:hover {
-  text-decoration: underline;
-}
-
-.location-info {
-  margin-top: 15px;
-  padding: 15px;
-  background: #f8f9fa;
-  border-radius: 8px;
-  border-left: 4px solid #0077b6;
-}
-
-.location-info h3 {
-  margin: 0 0 10px 0;
-  color: #0077b6;
-  font-size: 1.2rem;
-}
-
-.location-info p {
-  margin: 5px 0;
-  color: #495057;
-  font-size: 0.9rem;
-}
-
-.district-data {
-  margin-top: 15px;
-  padding: 10px;
-  background: white;
-  border-radius: 4px;
-  border: 1px solid #e0e0e0;
-}
-
-.district-data h4 {
-  margin: 0 0 10px 0;
-  color: #28a745;
-  font-size: 1rem;
-}
-
-.district-data p {
-  margin: 5px 0;
-  font-size: 0.9rem;
-}
-
-.district-data strong {
-  color: #495057;
-}
-
-.no-data-warning {
-  color: #dc3545 !important;
-  font-style: italic;
-  margin-top: 10px;
-}
-
-.data-warning {
-  text-align: center;
-  padding: 15px;
-  background: #fff3cd;
-  border: 1px solid #ffeaa7;
-  border-radius: 8px;
-  margin-top: 15px;
-  color: #856404;
-}
-
-.data-warning p {
-  margin: 0;
-  font-size: 0.9rem;
-}
-
-/* Responsive design */
-@media (max-width: 768px) {
-  .map-content {
-    flex-direction: column;
-    height: auto;
-  }
-  
-  .regions-sidebar {
-    width: 100%;
-    height: 200px;
-  }
-  
-  .map-display {
-    height: 300px;
-  }
-}
-
-/* MapChart.css - Add these styles to the existing file */
-
-.map-hover-popup {
-  background: white;
-  border: 2px solid #0077b6;
-  border-radius: 8px;
-  padding: 12px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-  max-width: 250px;
-  pointer-events: none;
-}
-
-.popup-content h4 {
-  margin: 0 0 8px 0;
-  color: #0077b6;
-  font-size: 1rem;
-  font-weight: 600;
-}
-
-.popup-region {
-  margin: 0 0 6px 0;
-  font-size: 0.85rem;
-  color: #666;
-  font-style: italic;
-}
-
-.popup-data {
-  margin: 0;
-  font-size: 0.9rem;
-  color: #333;
-}
-
-.popup-data strong {
-  color: #0077b6;
-}
-
-/* Ensure the popup doesn't overflow the screen */
-.map-hover-popup {
-  max-width: 280px;
-  word-wrap: break-word;
-}
-
-/* Add a small arrow to the popup */
-.map-hover-popup::before {
-  content: '';
-  position: absolute;
-  top: -10px;
-  left: 20px;
-  border-width: 0 10px 10px 10px;
-  border-style: solid;
-  border-color: transparent transparent #0077b6 transparent;
-}
-
-.map-hover-popup::after {
-  content: '';
-  position: absolute;
-  top: -7px;
-  left: 21px;
-  border-width: 0 9px 9px 9px;
-  border-style: solid;
-  border-color: transparent transparent white transparent;
-}
-
-/* MapChart.css */
-/* Existing styles remain unchanged, additions below */
-
-.map-chart-container {
-  width: 100%;
-  height: 600px;
-  display: flex;
-  flex-direction: column;
-}
-
-.map-header {
-  text-align: center;
-  margin-bottom: 15px;
-}
-
-.map-header h2 {
-  color: #323130;
-  margin: 0 0 5px 0;
-  font-size: 1.5rem;
-}
-
-.map-header p {
-  color: #605e5c;
-  margin: 0;
-  font-size: 0.9rem;
-}
-
-.data-column-selector {
-  text-align: center;
-  margin-bottom: 15px;
-  padding: 10px;
-  background: #f8f9fa;
-  border-radius: 8px;
-}
-
-.data-column-selector label {
-  font-weight: 500;
-  margin-right: 10px;
-}
-
-.data-column-selector select {
-  padding: 8px 12px;
-  border: 1px solid #ced4da;
-  border-radius: 4px;
-  background: white;
-  color: #495057;
-  cursor: pointer;
-  min-width: 200px;
-}
-
-.map-content {
-  display: flex;
-  height: 450px;
-  gap: 15px;
-}
-
-.regions-sidebar {
-  width: 250px;
-  background: #f8f9fa;
-  border-radius: 8px;
-  padding: 15px;
-  overflow-y: auto;
-  display: flex;
-  flex-direction: column;
-}
-
-.regions-sidebar h3 {
-  margin: 0 0 15px 0;
-  color: #0077b6;
-  font-size: 1.1rem;
-}
-
-.regions-list {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-.region-item {
-  padding: 10px;
-  background: white;
-  border: 1px solid #e0e0e0;
-  border-radius: 4px;
-  color: #0077b6;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  font-size: 0.9rem;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.region-item:hover {
-  background: #e6f7ff;
-  border-color: #0077b6;
-}
-
-.region-item.selected {
-  background: #0077b6;
-  color: white;
-  border-color: #0077b6;
-}
-
-.region-item .toggle-icon {
-  font-size: 0.8rem;
-}
-
-.districts-container {
-  margin-top: 5px;
-  border-left: 2px solid #0077b6;
-  padding-left: 10px;
-  margin-left: 10px;
-}
-
-.districts-list {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-  max-height: 300px;
-  overflow-y: auto;
-  margin-top: 8px;
-}
-
-.district-item {
-  padding: 8px;
-  background: white;
-  border: 1px solid #e0e0e0;
-  border-radius: 4px;
-  color: #495057;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  font-size: 0.85rem;
-}
-
-.district-item:hover {
-  background: #e6f7ff;
-  border-color: #0077b6;
-}
-
-.district-item.selected {
-  background: #0077b6;
-  color: white;
-  border-color: #0077b6;
-}
-
-.map-display {
-  flex: 1;
-  border-radius: 8px;
-  overflow: hidden;
-  position: relative;
-  border: 1px solid #e0e0e0;
-}
-
-.osm-iframe {
-  border-radius: 8px;
-}
-
-.map-attribution {
-  position: absolute;
-  bottom: 10px;
-  right: 10px;
-  background: rgba(255, 255, 255, 0.9);
-  padding: 5px 10px;
-  border-radius: 4px;
-  font-size: 0.8rem;
-}
-
-.map-attribution a {
-  color: #0077b6;
-  text-decoration: none;
-}
-
-.map-attribution a:hover {
-  text-decoration: underline;
-}
-
-.location-info {
-  margin-top: 15px;
-  padding: 15px;
-  background: #f8f9fa;
-  border-radius: 8px;
-  border-left: 4px solid #0077b6;
-}
-
-.location-info h3 {
-  margin: 0 0 10px 0;
-  color: #0077b6;
-  font-size: 1.2rem;
-}
-
-.location-info p {
-  margin: 5px 0;
-  color: #495057;
-  font-size: 0.9rem;
-}
-
-.district-data {
-  margin-top: 15px;
-  padding: 10px;
-  background: white;
-  border-radius: 4px;
-  border: 1px solid #e0e0e0;
-}
-
-.district-data h4 {
-  margin: 0 0 10px 0;
-  color: #28a745;
-  font-size: 1rem;
-}
-
-.district-data p {
-  margin: 5px 0;
-  font-size: 0.9rem;
-}
-
-.district-data strong {
-  color: #495057;
-}
-
-.no-data-warning {
-  color: #dc3545 !important;
-  font-style: italic;
-  margin-top: 10px;
-}
-
-.data-warning {
-  text-align: center;
-  padding: 15px;
-  background: #fff3cd;
-  border: 1px solid #ffeaa7;
-  border-radius: 8px;
-  margin-top: 15px;
-  color: #856404;
-}
-
-.data-warning p {
-  margin: 0;
-  font-size: 0.9rem;
-}
-
-/* Responsive design */
-@media (max-width: 768px) {
-  .map-content {
-    flex-direction: column;
-    height: auto;
-  }
-  
-  .regions-sidebar {
-    width: 100%;
-    height: 200px;
-  }
-  
-  .map-display {
-    height: 300px;
-  }
-}
-
-/* MapChart.css - Add these styles to the existing file */
-
-.map-hover-popup {
-  background: white;
-  border: 2px solid #0077b6;
-  border-radius: 8px;
-  padding: 12px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-  max-width: 250px;
-  pointer-events: none;
-}
-
-.popup-content h4 {
-  margin: 0 0 8px 0;
-  color: #0077b6;
-  font-size: 1rem;
-  font-weight: 600;
-}
-
-.popup-region {
-  margin: 0 0 6px 0;
-  font-size: 0.85rem;
-  color: #666;
-  font-style: italic;
-}
-
-.popup-data {
-  margin: 0;
-  font-size: 0.9rem;
-  color: #333;
-}
-
-.popup-data strong {
-  color: #0077b6;
-}
-
-/* Ensure the popup doesn't overflow the screen */
-.map-hover-popup {
-  max-width: 280px;
-  word-wrap: break-word;
-}
-
-/* Add a small arrow to the popup */
-.map-hover-popup::before {
-  content: '';
-  position: absolute;
-  top: -10px;
-  left: 20px;
-  border-width: 0 10px 10px 10px;
-  border-style: solid;
-  border-color: transparent transparent #0077b6 transparent;
-}
-
-.map-hover-popup::after {
-  content: '';
-  position: absolute;
-  top: -7px;
-  left: 21px;
-  border-width: 0 9px 9px 9px;
-  border-style: solid;
-  border-color: transparent transparent white transparent;
-}
-
-/* Leaflet custom marker styles */
-.custom-div-icon {
-  background: transparent;
-  border: none;
-  margin: 0;
-}
-
-.custom-marker {
-  background: rgba(30, 58, 138, 0.9);
-  color: white;
-  padding: 8px 12px;
-  border-radius: 8px;
-  text-align: center;
-  font-size: 12px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
-  min-width: 120px;
-  max-width: 150px;
-  white-space: normal;
-  line-height: 1.2;
-}
-
-.custom-marker strong {
-  font-size: 13px;
-}
-
-/* MapChart.css - Updated with minor adjustments for better visibility */
-/* All existing styles remain, only additions or changes noted */
-
-.map-display {
-  flex: 1;
-  border-radius: 8px;
-  overflow: hidden;
-  position: relative;
-  border: 1px solid #e0e0e0;
 }
 
 .map-attribution {
@@ -694,6 +182,121 @@
   text-decoration: underline;
 }
 
+/* Info Panel Styles */
+.info-panel-container {
+  margin-top: 15px;
+  padding: 15px;
+  background: #f8f9fa;
+  border-radius: 8px;
+  border-left: 4px solid #0077b6;
+}
+
+.info-panel-container h3 {
+  margin: 0 0 10px 0;
+  color: #0077b6;
+  font-size: 1.2rem;
+}
+
+.info-panel-container p {
+  margin: 5px 0;
+  color: #495057;
+  font-size: 0.9rem;
+}
+
+.district-data {
+  margin-top: 15px;
+  padding: 10px;
+  background: white;
+  border-radius: 4px;
+  border: 1px solid #e0e0e0;
+}
+
+.district-data h4 {
+  margin: 0 0 10px 0;
+  color: #28a745;
+  font-size: 1rem;
+}
+
+.district-data p {
+  margin: 5px 0;
+  font-size: 0.9rem;
+}
+
+.district-data strong {
+  color: #495057;
+}
+
+.no-data-warning {
+  color: #dc3545 !important;
+  font-style: italic;
+  margin-top: 10px;
+}
+
+/* Hover Popup Styles */
+.hover-popup-container {
+  position: fixed;
+  z-index: 1000;
+  pointer-events: none;
+  background: white;
+  border: 2px solid #0077b6;
+  border-radius: 8px;
+  padding: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  max-width: 280px;
+  word-wrap: break-word;
+}
+
+.hover-popup-container::before {
+  content: '';
+  position: absolute;
+  top: -10px;
+  left: 20px;
+  border-width: 0 10px 10px 10px;
+  border-style: solid;
+  border-color: transparent transparent #0077b6 transparent;
+}
+
+.hover-popup-container::after {
+  content: '';
+  position: absolute;
+  top: -7px;
+  left: 21px;
+  border-width: 0 9px 9px 9px;
+  border-style: solid;
+  border-color: transparent transparent white transparent;
+}
+
+.popup-content h4 {
+  margin: 0 0 8px 0;
+  color: #0077b6;
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.popup-region {
+  margin: 0 0 6px 0;
+  font-size: 0.85rem;
+  color: #666;
+  font-style: italic;
+}
+
+.popup-data {
+  margin: 0;
+  font-size: 0.9rem;
+  color: #333;
+}
+
+.popup-data strong {
+  color: #0077b6;
+}
+
+/* Custom Markers */
+.custom-div-icon {
+  background: transparent;
+  border: none;
+  margin: 0;
+}
+
 .custom-marker {
   background: rgba(30, 58, 138, 0.9);
   color: white;
@@ -714,4 +317,33 @@
   margin-bottom: 2px;
 }
 
-/* Rest of the CSS remains the same */
+/* Data Warning */
+.data-warning {
+  text-align: center;
+  padding: 15px;
+  background: #fff3cd;
+  border: 1px solid #ffeaa7;
+  border-radius: 8px;
+  margin-top: 15px;
+  color: #856404;
+}
+
+.data-warning p {
+  margin: 0;
+  font-size: 0.9rem;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .map-content {
+    flex-direction: column;
+    height: auto;
+  }
+  .sidebar-container {
+    width: 100%;
+    height: 200px;
+  }
+  .map-display-container {
+    height: 300px;
+  }
+}
