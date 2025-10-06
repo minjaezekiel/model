@@ -6,7 +6,7 @@ import * as echarts from 'echarts';
 function LineChart({ chartData, title, xAxisColumn, yAxisColumn, isMiniature = false }) {
   const option = {
     title: isMiniature ? undefined : {
-      text: title,
+      text: `📉 ${title}`,
       left: 'center',
       textStyle: {
         fontSize: 18,
@@ -60,11 +60,15 @@ function LineChart({ chartData, title, xAxisColumn, yAxisColumn, isMiniature = f
       },
       axisLine: {
         lineStyle: {
-          color: '#adb5bd'
+          color: '#adb5bd',
+          width: 2
         }
       },
       axisTick: {
-        alignWithLabel: true
+        alignWithLabel: true,
+        lineStyle: {
+          color: '#adb5bd'
+        }
       }
     },
     yAxis: {
@@ -75,7 +79,8 @@ function LineChart({ chartData, title, xAxisColumn, yAxisColumn, isMiniature = f
       },
       axisLine: {
         lineStyle: {
-          color: '#adb5bd'
+          color: '#adb5bd',
+          width: 2
         }
       },
       splitLine: {
@@ -90,37 +95,39 @@ function LineChart({ chartData, title, xAxisColumn, yAxisColumn, isMiniature = f
       type: 'line',
       smooth: true,
       symbol: 'circle',
-      symbolSize: isMiniature ? 4 : 8,
+      symbolSize: isMiniature ? 6 : 10,
       lineStyle: {
-        width: isMiniature ? 2 : 4,
+        width: isMiniature ? 3 : 5,
         color: new echarts.graphic.LinearGradient(0, 0, 1, 0, [
-          { offset: 0, color: '#43e97b' },
-          { offset: 1, color: '#38f9d7' }
+          { offset: 0, color: '#FF6B6B' },
+          { offset: 0.5, color: '#4ECDC4' },
+          { offset: 1, color: '#45B7D1' }
         ]),
-        shadowColor: 'rgba(67, 233, 123, 0.3)',
-        shadowBlur: 8,
-        shadowOffsetY: 4
+        shadowColor: 'rgba(255, 107, 107, 0.3)',
+        shadowBlur: 10,
+        shadowOffsetY: 6
       },
       itemStyle: {
-        color: '#43e97b',
+        color: '#FF6B6B',
         borderColor: '#fff',
         borderWidth: 2,
-        shadowColor: 'rgba(67, 233, 123, 0.5)',
-        shadowBlur: 4
+        shadowColor: 'rgba(255, 107, 107, 0.5)',
+        shadowBlur: 6
       },
       areaStyle: {
         color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
-          { offset: 0, color: 'rgba(67, 233, 123, 0.3)' },
-          { offset: 1, color: 'rgba(56, 249, 215, 0.1)' }
+          { offset: 0, color: 'rgba(255, 107, 107, 0.4)' },
+          { offset: 0.7, color: 'rgba(78, 205, 196, 0.3)' },
+          { offset: 1, color: 'rgba(69, 183, 209, 0.1)' }
         ])
       },
       emphasis: {
         itemStyle: {
           color: '#fff',
-          borderColor: '#43e97b',
+          borderColor: '#FF6B6B',
           borderWidth: 3,
-          shadowColor: 'rgba(67, 233, 123, 0.8)',
-          shadowBlur: 8
+          shadowColor: 'rgba(255, 107, 107, 0.8)',
+          shadowBlur: 10
         }
       }
     }],
@@ -131,7 +138,7 @@ function LineChart({ chartData, title, xAxisColumn, yAxisColumn, isMiniature = f
 
   return (
     <div className={`chart-container ${isMiniature ? 'miniature' : ''}`}>
-      {!isMiniature && title && <div className="chart-title">{title}</div>}
+      {!isMiniature && title && <div className="chart-title">📉 {title}</div>}
       <ReactECharts
         option={option}
         style={{ 

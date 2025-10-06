@@ -12,6 +12,8 @@ import BarChart from './BarChart';
 import LineChart from './LineChart';
 import ScatterChart from './ScatterChart';
 import AreaChart from './AreaChart';
+import PieChart from './PieChart';
+import HeatMap from './HeatMap';
 import MapChart from './MapChart/MapChart';
 import DashboardView from './DashboardView';
 import './VisualizationModal.css';
@@ -62,6 +64,7 @@ function VisualizationModal({ data, columns, isOpen, onClose, chartType: initial
       }
       
       setChartData(transformedData);
+      setTitle(chartTitle);
     } catch (error) {
       console.error("Error updating chart data:", error);
     }
@@ -90,7 +93,7 @@ function VisualizationModal({ data, columns, isOpen, onClose, chartType: initial
             <button className="back-btn" onClick={handleBackToDashboard}>
               ← Back to Dashboard
             </button>
-            <h3>Tanzania Map</h3>
+            <h3>🗺️ Tanzania Map</h3>
           </div>
           <MapChart sheetData={data} />
         </div>
@@ -121,7 +124,9 @@ function VisualizationModal({ data, columns, isOpen, onClose, chartType: initial
       'bar': BarChart,
       'line': LineChart,
       'scatter': ScatterChart,
-      'area': AreaChart
+      'area': AreaChart,
+      'pie': PieChart,
+      'heatmap': HeatMap
     };
 
     const ChartComponent = chartComponents[currentView] || BarChart;
@@ -132,7 +137,6 @@ function VisualizationModal({ data, columns, isOpen, onClose, chartType: initial
           <button className="back-btn" onClick={handleBackToDashboard}>
             ← Back to Dashboard
           </button>
-
         </div>
         <ChartComponent {...props} />
       </div>
@@ -150,7 +154,7 @@ function VisualizationModal({ data, columns, isOpen, onClose, chartType: initial
     <div className="visualization-modal">
       <div className="modal-content">
         <div className="modal-header">
-          <h2>Data Visualization</h2>
+          <h2>✨ Data Visualization</h2>
           <button className="close-btn" onClick={onClose}>×</button>
         </div>
         

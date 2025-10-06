@@ -39,11 +39,13 @@ function Visualization({ onSelect, sheetData, sheetName }) {
         <select value={selected} onChange={handleChange}>
           <option value="">Select Visualization</option>
           <option value="dashboard">📊 Dashboard View</option>
-          <option value="bar">Bar Chart</option>
-          <option value="line">Line Graph</option>
-          <option value="scatter">Scatter Plot</option>
-          <option value="area">Area Graph</option>
-          <option value="map">Map Chart</option>
+          <option value="bar">📈 Bar Chart</option>
+          <option value="line">📉 Line Graph</option>
+          <option value="scatter">🔵 Scatter Plot</option>
+          <option value="area">🟩 Area Graph</option>
+          <option value="pie">🥧 Pie Chart</option>
+          <option value="heatmap">🔥 Heat Map</option>
+          <option value="map">🗺️ Map Chart</option>
         </select>
       </div>
       

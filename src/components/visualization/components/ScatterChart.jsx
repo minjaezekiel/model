@@ -6,7 +6,7 @@ import * as echarts from 'echarts';
 function ScatterChart({ chartData, title, xAxisColumn, yAxisColumn, isMiniature = false }) {
   const option = {
     title: isMiniature ? undefined : {
-      text: title,
+      text: `🔵 ${title}`,
       left: 'center',
       textStyle: {
         fontSize: 18,
@@ -60,11 +60,15 @@ function ScatterChart({ chartData, title, xAxisColumn, yAxisColumn, isMiniature 
       },
       axisLine: {
         lineStyle: {
-          color: '#adb5bd'
+          color: '#adb5bd',
+          width: 2
         }
       },
       axisTick: {
-        alignWithLabel: true
+        alignWithLabel: true,
+        lineStyle: {
+          color: '#adb5bd'
+        }
       }
     },
     yAxis: {
@@ -75,7 +79,8 @@ function ScatterChart({ chartData, title, xAxisColumn, yAxisColumn, isMiniature 
       },
       axisLine: {
         lineStyle: {
-          color: '#adb5bd'
+          color: '#adb5bd',
+          width: 2
         }
       },
       splitLine: {
@@ -94,18 +99,19 @@ function ScatterChart({ chartData, title, xAxisColumn, yAxisColumn, isMiniature 
       type: 'scatter',
       itemStyle: {
         color: new echarts.graphic.RadialGradient(0.4, 0.3, 1, [
-          { offset: 0, color: 'rgb(251, 118, 123)' },
-          { offset: 1, color: 'rgb(254, 146, 67)' }
+          { offset: 0, color: '#FF6B6B' },
+          { offset: 0.5, color: '#4ECDC4' },
+          { offset: 1, color: '#45B7D1' }
         ]),
-        shadowBlur: 10,
-        shadowColor: 'rgba(251, 118, 123, 0.5)'
+        shadowBlur: 12,
+        shadowColor: 'rgba(255, 107, 107, 0.5)'
       },
       emphasis: {
         itemStyle: {
-          shadowColor: 'rgba(251, 118, 123, 0.8)',
-          shadowBlur: 15,
+          shadowColor: 'rgba(255, 107, 107, 0.8)',
+          shadowBlur: 18,
           borderColor: '#fff',
-          borderWidth: 2
+          borderWidth: 3
         }
       }
     }],
@@ -116,7 +122,7 @@ function ScatterChart({ chartData, title, xAxisColumn, yAxisColumn, isMiniature 
 
   return (
     <div className={`chart-container ${isMiniature ? 'miniature' : ''}`}>
-      {!isMiniature && title && <div className="chart-title">{title}</div>}
+      {!isMiniature && title && <div className="chart-title">🔵 {title}</div>}
       <ReactECharts
         option={option}
         style={{ 
