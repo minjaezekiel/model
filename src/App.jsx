@@ -6,7 +6,8 @@ function App() {
   return (
     <div className="app">
       <header className="app-header">
-        <h1>TZ Climate Model Data analysis</h1>
+        <h1>INFORM TANZANIA </h1>
+        <p>Index For Risk Management 🇹🇿 </p>
       </header>
       <Home />
     </div>
