@@ -2,23 +2,25 @@
 import React from 'react';
 import ReactECharts from 'echarts-for-react';
 import './ChartStyles.css';
-import * as echarts from 'echarts';
 
 function HeatMap({ chartData, title, xAxisColumn, yAxisColumn, isMiniature = false }) {
-  // Transform data for heatmap - ensure we have valid data
-  const heatmapData = chartData.map((item, index) => [
+  // Safe data transformation
+  const safeChartData = Array.isArray(chartData) ? chartData : [];
+  
+  // Create heatmap data with validation
+  const heatmapData = safeChartData.map((item, index) => [
     index,
     0,
-    item.value || 0
+    Number(item.value) || 0
   ]);
 
-  const maxValue = Math.max(...chartData.map(item => item.value || 0));
+  const maxValue = Math.max(1, ...heatmapData.map(item => item[2]));
   
-  // Ensure we have valid colors
-  const heatmapColors = [
+  // Simple, safe color palette
+  const safeColors = [
     '#313695', '#4575b4', '#74add1', '#abd9e9', '#e0f3f8',
     '#ffffbf', '#fee090', '#fdae61', '#f46d43', '#d73027', '#a50026'
-  ].filter(color => color && color !== 'undefined');
+  ];
 
   const option = {
     title: isMiniature ? undefined : {
@@ -39,24 +41,18 @@ function HeatMap({ chartData, title, xAxisColumn, yAxisColumn, isMiniature = fal
         color: '#fff'
       },
       formatter: function(params) {
-        const item = chartData[params.data[0]];
+        const item = safeChartData[params.data[0]];
         return `<strong>${item?.name || 'Unknown'}</strong><br/>Value: ${params.data[2] || 0}`;
       }
     },
     toolbox: isMiniature ? undefined : {
       feature: {
         saveAsImage: { 
-          title: 'Save as Image',
-          iconStyle: {
-            borderColor: '#ff6b6b'
-          }
+          title: 'Save as Image'
         },
         dataView: { 
           title: 'Data View', 
-          readOnly: true,
-          iconStyle: {
-            borderColor: '#ff6b6b'
-          }
+          readOnly: true
         }
       }
     },
@@ -69,7 +65,7 @@ function HeatMap({ chartData, title, xAxisColumn, yAxisColumn, isMiniature = fal
     },
     xAxis: {
       type: 'category',
-      data: chartData.map(item => item.name || 'Unknown'),
+      data: safeChartData.map(item => item.name || 'Unknown'),
       axisLabel: {
         rotate: isMiniature ? 0 : 45,
         fontSize: isMiniature ? 10 : 12,
@@ -105,13 +101,13 @@ function HeatMap({ chartData, title, xAxisColumn, yAxisColumn, isMiniature = fal
     },
     visualMap: {
       min: 0,
-      max: maxValue || 1,
+      max: maxValue,
       calculable: true,
       orient: 'vertical',
       left: 'right',
       top: 'center',
       inRange: {
-        color: heatmapColors
+        color: safeColors
       },
       textStyle: {
         color: '#495057'
@@ -132,6 +128,10 @@ function HeatMap({ chartData, title, xAxisColumn, yAxisColumn, isMiniature = fal
           shadowColor: 'rgba(0, 0, 0, 0.5)'
         }
       },
+      itemStyle: {
+        borderWidth: 1,
+        borderColor: '#fff'
+      },
       progressive: 1000,
       animation: true
     }],
@@ -139,6 +139,20 @@ function HeatMap({ chartData, title, xAxisColumn, yAxisColumn, isMiniature = fal
     animationDuration: 1000,
     animationEasing: 'cubicOut'
   };
+
+  // If no valid data, show empty state
+  if (safeChartData.length === 0) {
+    return (
+      <div className={`chart-container ${isMiniature ? 'miniature' : ''}`}>
+        {!isMiniature && title && <div className="chart-title">🔥 {title}</div>}
+        <div className="no-data">
+          <div className="no-data-icon">📊</div>
+          <h3>No Data Available</h3>
+          <p>Please check your data source</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className={`chart-container ${isMiniature ? 'miniature' : ''}`}>
@@ -150,8 +164,12 @@ function HeatMap({ chartData, title, xAxisColumn, yAxisColumn, isMiniature = fal
           width: '100%' 
         }}
         opts={{ 
-          renderer: 'canvas',
+          renderer: 'svg', // Use SVG instead of canvas to avoid gradient issues
           useDirtyRect: true 
+        }}
+        onEvents={{
+          rendered: () => console.log('HeatMap rendered successfully'),
+          'click': (params) => console.log('HeatMap clicked:', params)
         }}
       />
     </div>
