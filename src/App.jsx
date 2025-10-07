@@ -6,7 +6,8 @@ function App() {
   return (
     <div className="app">
       <header className="app-header">
-        <h1>TZ INFORM Model Viewer</h1>
+        <h1>INFORM TANZANIA</h1>
+        <p>Index For Risk Management 🇹🇿</p>
       </header>
       <Home />
     </div>

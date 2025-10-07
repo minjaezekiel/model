@@ -1,6 +1,7 @@
 import React, { useCallback } from 'react';
-import { TileLayer, GeoJSON, Marker, MapContainer } from 'react-leaflet';
+import { TileLayer, GeoJSON, Marker, MapContainer, ScaleControl } from 'react-leaflet';  // Added ScaleControl
 import { divIcon } from 'leaflet';
+import Legend from './Legend';  // New import for custom legend
 import { getStyleForFeature, getColorForValue } from './utils';
 import { tanzaniaRegions } from './tanzania-data'; // Adjust path
 import './MapChart.css';
@@ -116,6 +117,10 @@ function MapDisplay({ adm1GeoJson, adm2GeoJson, selectedRegion, selectedDistrict
         {selectedDistrict && selectedDistrict.lat && selectedDistrict.lng && (
           <Marker position={[selectedDistrict.lat, selectedDistrict.lng]} icon={getDistrictIcon()} />
         )}
+        {/* Legend (Key) - Top Right */}
+        <Legend dataType={dataType} colorScale={colorScale} dataColumn={dataColumn} />
+        {/* Scale - Bottom Right */}
+        <ScaleControl position="bottomright" imperial={false} metric={true} />
       </MapContainer>
       <div className="map-attribution">
         <a href="https://www.openstreetmap.org/" target="_blank" rel="noopener noreferrer">View Larger Map</a><br />
