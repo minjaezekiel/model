@@ -1,4 +1,3 @@
-// DashboardView.jsx
 import React, { useState, useEffect } from 'react';
 import { 
   getNumericColumns,
@@ -10,6 +9,8 @@ import BarChart from './BarChart';
 import LineChart from './LineChart';
 import ScatterChart from './ScatterChart';
 import AreaChart from './AreaChart';
+import PieChart from './PieChart';
+import HeatMap from './HeatMap';
 import MapChart from './MapChart/MapChart';
 import './DashboardView.css';
 
@@ -19,7 +20,7 @@ function DashboardView({ data, columns, isOpen, onClose, onViewChart, onViewMap 
   const [aggregationType, setAggregationType] = useState('sum');
   const [numericColumns, setNumericColumns] = useState([]);
   const [allColumns, setAllColumns] = useState([]);
-  const [chartData, setChartData] = useState({});
+  const [chartData, setChartData] = useState([]);
 
   useEffect(() => {
     if (columns && columns.length > 0 && data && data.length > 0) {
@@ -86,7 +87,7 @@ function DashboardView({ data, columns, isOpen, onClose, onViewChart, onViewMap 
     <div className="dashboard-modal">
       <div className="dashboard-content">
         <div className="dashboard-header">
-          <h2>Data Visualization Dashboard</h2>
+          <h2>✨ Data Visualization Dashboard</h2>
           <button className="dashboard-close-btn" onClick={onClose}>×</button>
         </div>
         
@@ -141,7 +142,7 @@ function DashboardView({ data, columns, isOpen, onClose, onViewChart, onViewMap 
               {/* Bar Chart */}
               <div className="chart-card">
                 <div className="chart-card-header">
-                  <h3 className="chart-card-title">Bar Chart</h3>
+                  <h3 className="chart-card-title">📈 Bar Chart</h3>
                   <button 
                     className="view-chart-btn"
                     onClick={() => handleViewChart('bar')}
@@ -156,6 +157,7 @@ function DashboardView({ data, columns, isOpen, onClose, onViewChart, onViewMap 
                       title=""
                       xAxisColumn={xAxisColumn}
                       yAxisColumn={yAxisColumn}
+                      isMiniature={true}
                     />
                   ) : (
                     <div className="dashboard-empty">
@@ -168,7 +170,7 @@ function DashboardView({ data, columns, isOpen, onClose, onViewChart, onViewMap 
               {/* Line Chart */}
               <div className="chart-card">
                 <div className="chart-card-header">
-                  <h3 className="chart-card-title">Line Graph</h3>
+                  <h3 className="chart-card-title">📉 Line Graph</h3>
                   <button 
                     className="view-chart-btn"
                     onClick={() => handleViewChart('line')}
@@ -183,6 +185,7 @@ function DashboardView({ data, columns, isOpen, onClose, onViewChart, onViewMap 
                       title=""
                       xAxisColumn={xAxisColumn}
                       yAxisColumn={yAxisColumn}
+                      isMiniature={true}
                     />
                   ) : (
                     <div className="dashboard-empty">
@@ -195,7 +198,7 @@ function DashboardView({ data, columns, isOpen, onClose, onViewChart, onViewMap 
               {/* Scatter Plot */}
               <div className="chart-card">
                 <div className="chart-card-header">
-                  <h3 className="chart-card-title">Scatter Plot</h3>
+                  <h3 className="chart-card-title">🔵 Scatter Plot</h3>
                   <button 
                     className="view-chart-btn"
                     onClick={() => handleViewChart('scatter')}
@@ -210,6 +213,7 @@ function DashboardView({ data, columns, isOpen, onClose, onViewChart, onViewMap 
                       title=""
                       xAxisColumn={xAxisColumn}
                       yAxisColumn={yAxisColumn}
+                      isMiniature={true}
                     />
                   ) : (
                     <div className="dashboard-empty">
@@ -222,7 +226,7 @@ function DashboardView({ data, columns, isOpen, onClose, onViewChart, onViewMap 
               {/* Area Chart */}
               <div className="chart-card">
                 <div className="chart-card-header">
-                  <h3 className="chart-card-title">Area Graph</h3>
+                  <h3 className="chart-card-title">🟩 Area Graph</h3>
                   <button 
                     className="view-chart-btn"
                     onClick={() => handleViewChart('area')}
@@ -237,6 +241,63 @@ function DashboardView({ data, columns, isOpen, onClose, onViewChart, onViewMap 
                       title=""
                       xAxisColumn={xAxisColumn}
                       yAxisColumn={yAxisColumn}
+                      isMiniature={true}
+                    />
+                  ) : (
+                    <div className="dashboard-empty">
+                      <p>No data available</p>
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              {/* Pie Chart */}
+              <div className="chart-card">
+                <div className="chart-card-header">
+                  <h3 className="chart-card-title">🥧 Pie Chart</h3>
+                  <button 
+                    className="view-chart-btn"
+                    onClick={() => handleViewChart('pie')}
+                  >
+                    View Chart
+                  </button>
+                </div>
+                <div className="chart-container-small">
+                  {chartData.length > 0 ? (
+                    <PieChart 
+                      chartData={chartData}
+                      title=""
+                      xAxisColumn={xAxisColumn}
+                      yAxisColumn={yAxisColumn}
+                      isMiniature={true}
+                    />
+                  ) : (
+                    <div className="dashboard-empty">
+                      <p>No data available</p>
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              {/* Heat Map */}
+              <div className="chart-card">
+                <div className="chart-card-header">
+                  <h3 className="chart-card-title">🔥 Heat Map</h3>
+                  <button 
+                    className="view-chart-btn"
+                    onClick={() => handleViewChart('heatmap')}
+                  >
+                    View Chart
+                  </button>
+                </div>
+                <div className="chart-container-small">
+                  {chartData.length > 0 ? (
+                    <HeatMap 
+                      chartData={chartData}
+                      title=""
+                      xAxisColumn={xAxisColumn}
+                      yAxisColumn={yAxisColumn}
+                      isMiniature={true}
                     />
                   ) : (
                     <div className="dashboard-empty">
@@ -251,7 +312,7 @@ function DashboardView({ data, columns, isOpen, onClose, onViewChart, onViewMap 
           <div className="dashboard-map">
             <div className="map-card">
               <div className="map-card-header">
-                <h3 className="map-card-title">Map</h3>
+                <h3 className="map-card-title">🗺️ Map</h3>
                 <button 
                   className="view-map-btn"
                   onClick={handleViewMap}

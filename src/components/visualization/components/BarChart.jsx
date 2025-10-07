@@ -1,12 +1,12 @@
 import React from 'react';
 import ReactECharts from 'echarts-for-react';
 import './ChartStyles.css';
-import * as echarts from 'echarts'; // Add this import
+import * as echarts from 'echarts';
 
 function BarChart({ chartData, title, xAxisColumn, yAxisColumn, isMiniature = false }) {
   const option = {
     title: isMiniature ? undefined : {
-      text: title,
+      text: `📈 ${title}`,
       left: 'center',
       textStyle: {
         fontSize: 18,
@@ -60,11 +60,15 @@ function BarChart({ chartData, title, xAxisColumn, yAxisColumn, isMiniature = fa
       },
       axisLine: {
         lineStyle: {
-          color: '#adb5bd'
+          color: '#adb5bd',
+          width: 2
         }
       },
       axisTick: {
-        alignWithLabel: true
+        alignWithLabel: true,
+        lineStyle: {
+          color: '#adb5bd'
+        }
       }
     },
     yAxis: {
@@ -75,7 +79,8 @@ function BarChart({ chartData, title, xAxisColumn, yAxisColumn, isMiniature = fa
       },
       axisLine: {
         lineStyle: {
-          color: '#adb5bd'
+          color: '#adb5bd',
+          width: 2
         }
       },
       splitLine: {
@@ -90,29 +95,32 @@ function BarChart({ chartData, title, xAxisColumn, yAxisColumn, isMiniature = fa
       type: 'bar',
       itemStyle: {
         color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
-          { offset: 0, color: '#667eea' },
-          { offset: 1, color: '#764ba2' }
+          { offset: 0, color: '#FF6B6B' },
+          { offset: 0.5, color: '#4ECDC4' },
+          { offset: 1, color: '#45B7D1' }
         ]),
-        borderRadius: [4, 4, 0, 0],
-        shadowColor: 'rgba(102, 126, 234, 0.5)',
-        shadowBlur: 6
+        borderRadius: [6, 6, 0, 0],
+        shadowColor: 'rgba(78, 205, 196, 0.5)',
+        shadowBlur: 8,
+        shadowOffsetY: 3
       },
       emphasis: {
         itemStyle: {
-          shadowColor: 'rgba(102, 126, 234, 0.8)',
-          shadowBlur: 10
+          shadowColor: 'rgba(78, 205, 196, 0.8)',
+          shadowBlur: 12,
+          shadowOffsetY: 6
         }
       },
-      barWidth: isMiniature ? '50%' : '60%'
+      barWidth: isMiniature ? '50%' : '65%'
     }],
     animation: true,
     animationDuration: 1000,
-    animationEasing: 'cubicOut'
+    animationEasing: 'elasticOut'
   };
 
   return (
     <div className={`chart-container ${isMiniature ? 'miniature' : ''}`}>
-      {!isMiniature && title && <div className="chart-title">{title}</div>}
+      {!isMiniature && title && <div className="chart-title">📈 {title}</div>}
       <ReactECharts
         option={option}
         style={{ 

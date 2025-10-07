@@ -1,18 +1,44 @@
+// PieChart.jsx
 import React from 'react';
 import ReactECharts from 'echarts-for-react';
 import './ChartStyles.css';
 import * as echarts from 'echarts';
 
 function PieChart({ chartData, title, xAxisColumn, yAxisColumn, isMiniature = false }) {
+  // Function to darken a hex color with validation
+  const darkenColor = (color, percent) => {
+    if (!color || typeof color !== 'string') return '#FF6B6B';
+    
+    try {
+      let hex = color.replace("#", "");
+      if (hex.length === 3) {
+        hex = hex[0] + hex[0] + hex[1] + hex[1] + hex[2] + hex[2];
+      }
+      
+      const num = parseInt(hex, 16);
+      if (isNaN(num)) return '#FF6B6B';
+      
+      const amt = Math.round(2.55 * percent);
+      const R = Math.max(0, Math.min(255, (num >> 16) - amt));
+      const G = Math.max(0, Math.min(255, ((num >> 8) & 0x00FF) - amt));
+      const B = Math.max(0, Math.min(255, (num & 0x0000FF) - amt));
+      
+      return "#" + ((1 << 24) + (R << 16) + (G << 8) + B).toString(16).slice(1).toUpperCase();
+    } catch (error) {
+      return '#FF6B6B';
+    }
+  };
+
+  // Validated color array
   const colors = [
-    '#667eea', '#764ba2', '#f093fb', '#f5576c', 
-    '#4facfe', '#00f2fe', '#43e97b', '#38f9d7',
-    '#fa709a', '#fee140', '#ff9a9e', '#fad0c4'
-  ];
+    '#FF6B6B', '#4ECDC4', '#45B7D1', '#96CEB4', '#FFEAA7',
+    '#DDA0DD', '#98D8C8', '#F7DC6F', '#BB8FCE', '#85C1E9',
+    '#F8C471', '#82E0AA', '#F1948A', '#85C1E9', '#D7BDE2'
+  ].filter(color => color && color !== 'undefined');
 
   const option = {
     title: isMiniature ? undefined : {
-      text: title,
+      text: `🥧 ${title}`,
       left: 'center',
       textStyle: {
         fontSize: 18,
@@ -23,7 +49,7 @@ function PieChart({ chartData, title, xAxisColumn, yAxisColumn, isMiniature = fa
     tooltip: {
       trigger: 'item',
       backgroundColor: 'rgba(44, 62, 80, 0.95)',
-      borderColor: '#667eea',
+      borderColor: '#FF6B6B',
       borderWidth: 2,
       textStyle: {
         color: '#fff'
@@ -35,14 +61,14 @@ function PieChart({ chartData, title, xAxisColumn, yAxisColumn, isMiniature = fa
         saveAsImage: { 
           title: 'Save as Image',
           iconStyle: {
-            borderColor: '#667eea'
+            borderColor: '#FF6B6B'
           }
         },
         dataView: { 
           title: 'Data View', 
           readOnly: true,
           iconStyle: {
-            borderColor: '#667eea'
+            borderColor: '#FF6B6B'
           }
         }
       }
@@ -68,23 +94,24 @@ function PieChart({ chartData, title, xAxisColumn, yAxisColumn, isMiniature = fa
     series: [{
       name: title,
       type: 'pie',
-      radius: isMiniature ? ['40%', '70%'] : ['50%', '80%'],
+      radius: isMiniature ? ['40%', '70%'] : ['45%', '75%'],
       center: isMiniature ? ['50%', '45%'] : ['40%', '50%'],
       avoidLabelOverlap: true,
       itemStyle: {
-        borderRadius: 6,
+        borderRadius: 8,
         borderColor: '#fff',
-        borderWidth: 2,
-        shadowColor: 'rgba(0, 0, 0, 0.1)',
-        shadowBlur: 4,
-        shadowOffsetX: 2,
-        shadowOffsetY: 2
+        borderWidth: 3,
+        shadowColor: 'rgba(0, 0, 0, 0.3)',
+        shadowBlur: 8,
+        shadowOffsetX: 3,
+        shadowOffsetY: 3
       },
       label: {
         show: !isMiniature,
         formatter: '{b}: {d}%',
         fontSize: isMiniature ? 10 : 12,
-        color: '#495057'
+        color: '#495057',
+        fontWeight: 'bold'
       },
       emphasis: {
         label: {
@@ -93,22 +120,34 @@ function PieChart({ chartData, title, xAxisColumn, yAxisColumn, isMiniature = fa
           fontWeight: 'bold'
         },
         itemStyle: {
-          shadowBlur: 10,
+          shadowBlur: 15,
           shadowOffsetX: 0,
-          shadowColor: 'rgba(0, 0, 0, 0.5)'
+          shadowColor: 'rgba(0, 0, 0, 0.5)',
+          borderWidth: 4,
+          borderColor: '#fff'
         }
       },
       labelLine: {
         show: !isMiniature,
         length: isMiniature ? 10 : 20,
-        length2: isMiniature ? 5 : 10
+        length2: isMiniature ? 5 : 15,
+        smooth: true
       },
-      data: chartData.map((item, index) => ({
-        ...item,
-        itemStyle: {
-          color: colors[index % colors.length]
-        }
-      })),
+      data: chartData.map((item, index) => {
+        const baseColor = colors[index % colors.length];
+        const darkenedColor = darkenColor(baseColor, 20);
+        
+        return {
+          name: item.name || `Item ${index + 1}`,
+          value: item.value || 0,
+          itemStyle: {
+            color: new echarts.graphic.RadialGradient(0.4, 0.3, 1, [
+              { offset: 0, color: baseColor },
+              { offset: 1, color: darkenedColor }
+            ])
+          }
+        };
+      }),
       animationType: 'scale',
       animationEasing: 'elasticOut',
       animationDelay: function (idx) {
@@ -116,12 +155,12 @@ function PieChart({ chartData, title, xAxisColumn, yAxisColumn, isMiniature = fa
       }
     }],
     animation: true,
-    animationDuration: 1000
+    animationDuration: 1200
   };
 
   return (
     <div className={`chart-container ${isMiniature ? 'miniature' : ''}`}>
-      {!isMiniature && title && <div className="chart-title">{title}</div>}
+      {!isMiniature && title && <div className="chart-title">🥧 {title}</div>}
       <ReactECharts
         option={option}
         style={{ 
