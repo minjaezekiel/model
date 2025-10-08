@@ -8,38 +8,44 @@ export const detectDataType = (sheetData, dataColumn) => {
   const numericCount = values.filter(v => !isNaN(parseFloat(v)) && isFinite(v)).length;
   const isNumerical = numericCount / values.length > 0.9; // >90% numeric
 
-  if (isNumerical) {
-    const nums = values.map(v => parseFloat(v)).filter(v => !isNaN(v));
-    const min = Math.min(...nums);
-    const max = Math.max(...nums);
-    const classes = 5; // 5 classes matching INFORM levels
-    // Risk palette: Low (green) to High (red), shining/strong for visibility
-    return {
-      type: 'numerical',
-      scale: { 
-        min, 
-        max, 
-        classes, 
-        colors: ['#fa7f05', '#00f700', '#ffff00', '#0000ff', '#ff0000'], // Very Low (bright green) -> Very High (vivid red)
-        labels: ['Very Low', 'Low', 'Medium', 'High', 'Very High'] // For legend
+if (isNumerical) {
+  const nums = values.map(v => parseFloat(v)).filter(v => !isNaN(v));
+  const min = Math.min(...nums);
+  const max = Math.max(...nums);
+  const classes = 5; // 5 classes matching INFORM levels
+  // Risk palette: Very Low (green) → Very High (red)
+  return {
+    type: 'numerical',
+    scale: { 
+      min, 
+      max, 
+      classes, 
+      colors: ['#00FF00', '#FFFF00', '#FFA500', '#FF0000', '#A52A2A'], 
+      labels: ['Very Low', 'Low', 'Medium', 'High', 'Very High'] // Legend labels
+    }
+  };
+} else {
+  // Categorical mapping with pure spectrum colors
+  return {
+    type: 'categorical',
+    scale: {
+      mappings: {
+        'very low': '#00FF00',
+        'low': '#FFFF00',
+        'medium': '#FFA500',
+        'high': '#FF0000',
+        'very high': '#A52A2A',
+        'extreme': '#654321',
+        'available': '#0000FF',
+        'not available': '#00FF00',
+        'yes': '#0000FF',
+        'no': '#00FF00',
+        // Default fallback
+        default: '#9E9E9E'
       }
-    };
-  } else {
-    // Categorical mapping (extended for INFORM risk terms)
-    return {
-      type: 'categorical',
-      scale: {
-        mappings: {
-          'very low': '#ffff00', low: '#ffff00', no: '#ffff00', available: '#00f700',
-          medium: '#fa7f05', moderate: '#fa7f05',
-          high: '#ff0000', 'very high': '#be0404ff', extreme: '#6d0303ff',
-          yes: '#0000ff',
-          // Defaults
-          default: '#9E9E9E'
-        }
-      }
-    };
+    }
   }
+}
 };
 
 // Get color for a value
