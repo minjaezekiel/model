@@ -12,21 +12,28 @@ export const detectDataType = (sheetData, dataColumn) => {
     const nums = values.map(v => parseFloat(v)).filter(v => !isNaN(v));
     const min = Math.min(...nums);
     const max = Math.max(...nums);
-    const classes = 5; // Green to Red
+    const classes = 5; // 5 classes matching INFORM levels
+    // Risk palette: Low (green) to High (red), shining/strong for visibility
     return {
       type: 'numerical',
-      scale: { min, max, classes, colors: ['#4CAF50', '#8BC34A', '#FFEB3B', '#FF9800', '#F44336'] }
+      scale: { 
+        min, 
+        max, 
+        classes, 
+        colors: ['#047a3fff', '#038103ff', '#b99e03ff', '#a85e04ff', '#9e2c03ff'], // Very Low (bright green) -> Very High (vivid red)
+        labels: ['Very Low', 'Low', 'Medium', 'High', 'Very High'] // For legend
+      }
     };
   } else {
-    // Categorical mapping (extend as needed based on Excel)
+    // Categorical mapping (extended for INFORM risk terms)
     return {
       type: 'categorical',
       scale: {
         mappings: {
-          low: '#00e908ff', no: '#00e708ff', available: '#00c907ff',
-          medium: '#eed600ff', moderate: '#f0d800ff',
-          high: '#FF9800', extreme: '#f01000ff', 'very high': '#ff1100ff',
-          yes: '#013cffff',
+          'very low': '#00944aff', low: '#029402ff', no: '#039403ff', available: '#008f00ff',
+          medium: '#a88f02ff', moderate: '#9c8503ff',
+          high: '#965303ff', 'very high': '#972a03ff', extreme: '#491502ff',
+          yes: '#005ca7ff',
           // Defaults
           default: '#9E9E9E'
         }
