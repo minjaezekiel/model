@@ -50,7 +50,7 @@ const generateLegendContent = (dataType, scale) => {
       const from = min + (i * step);
       const to = min + ((i + 1) * step);
       const label = i === 0 ? `< ${to.toFixed(1)}` : i === classes - 1 ? `≥ ${from.toFixed(1)}` : `${from.toFixed(1)} - ${to.toFixed(1)}`;
-      labels.push(`<i style="background:${colors[i]}; opacity:0.7;"></i> ${label}`);
+      labels.push(`<i style="background:${colors[i]}; opacity:0.9;"></i> ${label}`);
     }
     return labels.join('<br>');
   } else { // categorical
@@ -58,7 +58,7 @@ const generateLegendContent = (dataType, scale) => {
     if (!mappings) return '<i style="background:gray"></i> No data';
     const labels = Object.entries(mappings)
       .filter(([key]) => key !== 'default')
-      .map(([key, color]) => `<i style="background:${color}; opacity:0.7;"></i> ${key.toUpperCase()}`)
+      .map(([key, color]) => `<i style="background:${color}; opacity:0.9;"></i> ${key.toUpperCase()}`)
       .join('<br>');
     return labels || '<i style="background:gray"></i> No categories';
   }

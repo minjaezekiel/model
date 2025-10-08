@@ -20,7 +20,7 @@ export const detectDataType = (sheetData, dataColumn) => {
         min, 
         max, 
         classes, 
-        colors: ['#047a3fff', '#038103ff', '#b99e03ff', '#a85e04ff', '#9e2c03ff'], // Very Low (bright green) -> Very High (vivid red)
+        colors: ['#fa7f05', '#00f700', '#ffff00', '#0000ff', '#ff0000'], // Very Low (bright green) -> Very High (vivid red)
         labels: ['Very Low', 'Low', 'Medium', 'High', 'Very High'] // For legend
       }
     };
@@ -30,10 +30,10 @@ export const detectDataType = (sheetData, dataColumn) => {
       type: 'categorical',
       scale: {
         mappings: {
-          'very low': '#00944aff', low: '#029402ff', no: '#039403ff', available: '#008f00ff',
-          medium: '#a88f02ff', moderate: '#9c8503ff',
-          high: '#965303ff', 'very high': '#972a03ff', extreme: '#491502ff',
-          yes: '#005ca7ff',
+          'very low': '#ffff00', low: '#ffff00', no: '#ffff00', available: '#00f700',
+          medium: '#fa7f05', moderate: '#fa7f05',
+          high: '#ff0000', 'very high': '#be0404ff', extreme: '#6d0303ff',
+          yes: '#0000ff',
           // Defaults
           default: '#9E9E9E'
         }
@@ -63,7 +63,7 @@ export const getColorForValue = (value, dataType, scale) => {
 // Get full style for a GeoJSON feature
 export const getStyleForFeature = (value, dataType, scale, isSelected, isRegion = false) => {
   const baseColor = getColorForValue(value, dataType, scale);
-  const fillOpacity = isSelected ? 0.7 : (isRegion ? 0.2 : 0.4); // Fainter for regions
+  const fillOpacity = isSelected ? 0.9 : (isRegion ? 0.7 : 0.9); // Fainter for regions
   const color = isSelected ? '#1e3a8a' : baseColor;
   const weight = isSelected ? 3 : (isRegion ? 1 : 2);
 
