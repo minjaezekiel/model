@@ -20,7 +20,7 @@ if (isNumerical) {
       min, 
       max, 
       classes, 
-      colors: ['#00FF00', '#FFFF00', '#FFA500', '#FF0000', '#A52A2A'], 
+      colors: ['#FFFFFF', '#FFFF00', '#FFA500', '#FF0000', '#A52A2A'], 
       labels: ['Very Low', 'Low', 'Medium', 'High', 'Very High'] // Legend labels
     }
   };
@@ -30,7 +30,7 @@ if (isNumerical) {
     type: 'categorical',
     scale: {
       mappings: {
-        'very low': '#00FF00',
+        'very low': '#FFFFFF',
         'low': '#FFFF00',
         'medium': '#FFA500',
         'high': '#FF0000',
