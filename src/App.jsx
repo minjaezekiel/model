@@ -7,7 +7,7 @@ function App() {
     <div className="app">
       <header className="app-header">
         <h1>INFORM TANZANIA</h1>
-        <p>Index For Risk Management 🇹🇿</p>
+        <p>Index For Risk Management Model 🇹🇿</p>
       </header>
       <Home />
     </div>
