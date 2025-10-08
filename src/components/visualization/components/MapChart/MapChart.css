@@ -56,6 +56,14 @@
   gap: 15px;
 }
 
+/* Hover Popup Styles - Add coords */
+.popup-coords {
+  margin: 4px 0 0 0;
+  font-size: 0.85rem;
+  color: #666;
+  font-style: italic;
+}
+
 /* Sidebar Styles */
 .sidebar-container {
   width: 250px;

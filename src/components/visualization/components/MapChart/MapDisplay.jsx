@@ -1,17 +1,37 @@
 import React, { useCallback } from 'react';
-import { TileLayer, GeoJSON, Marker, MapContainer, ScaleControl } from 'react-leaflet';  // Added ScaleControl
+import { TileLayer, GeoJSON, Marker, MapContainer, ScaleControl } from 'react-leaflet';
 import { divIcon } from 'leaflet';
-import Legend from './Legend';  // New import for custom legend
+import Legend from './Legend';
 import { getStyleForFeature, getColorForValue } from './utils';
 import { tanzaniaRegions } from './tanzania-data'; // Adjust path
 import './MapChart.css';
 
 function MapDisplay({ adm1GeoJson, adm2GeoJson, selectedRegion, selectedDistrict, dataColumn, sheetData, dataType, colorScale, regionData, districtData, onHover, onHoverLeave, mapCenter, mapZoom }) {
+  // Tanzania bounds: [[south, west], [north, east]]
+  const tanzaniaBounds = [
+    [-11.75, 29.34],  // Southwest
+    [-1.05, 40.43]    // Northeast
+  ];
+
+  // Find lat/lng for a region
+  const getRegionCoords = (regionName) => {
+    const region = tanzaniaRegions.find(r => r.name === regionName);
+    return region ? { lat: region.lat, lng: region.lng } : { lat: null, lng: null };
+  };
+
+  // Find lat/lng for a district (in its region)
+  const getDistrictCoords = (districtName, regionName) => {
+    const region = tanzaniaRegions.find(r => r.name === regionName);
+    if (!region) return { lat: null, lng: null };
+    const district = region.districts.find(d => d.name === districtName);
+    return district ? { lat: district.lat, lng: district.lng } : getRegionCoords(regionName); // Fallback to region
+  };
+
   // ADM1 onEachFeature (useCallback to recreate on dataColumn change)
   const onEachAdm1 = useCallback((feature, layer) => {
     const regionName = feature.properties?.shapeName;
-    const region = tanzaniaRegions.find(r => r.name === regionName);
-    if (region) {
+    const coords = getRegionCoords(regionName);
+    if (tanzaniaRegions.find(r => r.name === regionName)) {
       layer.on({
         mouseover: () => {
           const avgValue = sheetData
@@ -21,7 +41,9 @@ function MapDisplay({ adm1GeoJson, adm2GeoJson, selectedRegion, selectedDistrict
             title: regionName, 
             data: avgValue.toFixed(2), 
             isDistrict: false,
-            dataColumn: dataColumn  // Added for popup label
+            dataColumn: dataColumn,
+            lat: coords.lat,
+            lng: coords.lng
           });
         },
         mouseout: onHoverLeave,
@@ -41,6 +63,7 @@ function MapDisplay({ adm1GeoJson, adm2GeoJson, selectedRegion, selectedDistrict
       }
     }
     if (regionName) {
+      const coords = getDistrictCoords(districtName, regionName);
       layer.on({
         mouseover: () => {
           const row = sheetData.find(r => r.ADM2_NAME === districtName && r.ADM1_NAME === regionName);
@@ -49,7 +72,9 @@ function MapDisplay({ adm1GeoJson, adm2GeoJson, selectedRegion, selectedDistrict
             data: row ? row[dataColumn] : 'No data', 
             isDistrict: true, 
             region: regionName,
-            dataColumn: dataColumn  // Added for popup label
+            dataColumn: dataColumn,
+            lat: coords.lat,
+            lng: coords.lng
           });
         },
         mouseout: onHoverLeave,
@@ -97,7 +122,15 @@ function MapDisplay({ adm1GeoJson, adm2GeoJson, selectedRegion, selectedDistrict
 
   return (
     <div className="map-display-container">
-      <MapContainer center={mapCenter} zoom={mapZoom} style={{ height: '100%', width: '100%' }}>
+      <MapContainer 
+        center={mapCenter} 
+        zoom={mapZoom} 
+        style={{ height: '100%', width: '100%' }}
+        maxBounds={tanzaniaBounds}  // Restrict to Tanzania
+        maxBoundsViscosity={1.0}   // "Sticky" bounds
+        minZoom={5}
+        maxZoom={10}
+      >
         <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors' />
         <GeoJSON 
           key={`adm1-${dataColumn}`}  // Force re-mount on column change

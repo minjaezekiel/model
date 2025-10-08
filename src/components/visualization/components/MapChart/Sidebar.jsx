@@ -11,14 +11,18 @@ function Sidebar({ regions, expandedRegion, selectedRegion, selectedDistrict, on
         title: region.name, 
         data: avgValue.toFixed(2), 
         isDistrict: false,
-        dataColumn: dataColumn  // Added for popup label
+        dataColumn: dataColumn,
+        lat: region.lat,
+        lng: region.lng
       });
     } else {
       onHover({ 
         title: region.name, 
         data: 'No data', 
         isDistrict: false,
-        dataColumn: dataColumn  // Added for popup label
+        dataColumn: dataColumn,
+        lat: region.lat,
+        lng: region.lng
       });
     }
   };
@@ -31,7 +35,9 @@ function Sidebar({ regions, expandedRegion, selectedRegion, selectedDistrict, on
         data: row ? row[dataColumn] : 'No data', 
         isDistrict: true, 
         region: regionName,
-        dataColumn: dataColumn  // Added for popup label
+        dataColumn: dataColumn,
+        lat: district.lat,
+        lng: district.lng
       });
     } else {
       onHover({ 
@@ -39,7 +45,9 @@ function Sidebar({ regions, expandedRegion, selectedRegion, selectedDistrict, on
         data: 'No data', 
         isDistrict: true, 
         region: regionName,
-        dataColumn: dataColumn  // Added for popup label
+        dataColumn: dataColumn,
+        lat: district.lat,
+        lng: district.lng
       });
     }
   };
