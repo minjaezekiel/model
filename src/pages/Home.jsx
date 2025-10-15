@@ -11,8 +11,6 @@ function Home() {
   const [activeSheet, setActiveSheet] = useState(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
-  const [customFile, setCustomFile] = useState(null);
-  const [fileName, setFileName] = useState("model.xlsx");
   const [isDataLoaded, setIsDataLoaded] = useState(false);
   const rowsPerPage = 20;
 
@@ -20,8 +18,7 @@ function Home() {
     async function fetchExcel() {
       try {
         setIsDataLoaded(false);
-        const filePath = customFile ? URL.createObjectURL(customFile) : "/model.xlsx";
-        const { sheets } = await loadExcel(filePath);
+        const { sheets } = await loadExcel("/model.xlsx");
         setSheets(sheets);
         setActiveSheet(Object.keys(sheets)[0]);
         setIsDataLoaded(true);
@@ -31,24 +28,8 @@ function Home() {
       }
     }
     fetchExcel();
-  }, [customFile]);
+  }, []);
 
-  const handleFileUpload = (event) => {
-    const file = event.target.files[0];
-    if (file) {
-      setCustomFile(file);
-      setFileName(file.name);
-      setSearchQuery("");
-      setCurrentPage(1);
-    }
-  };
-
-  const removeUploadedFile = () => {
-    setCustomFile(null);
-    setFileName("model.xlsx");
-    setSearchQuery("");
-    setCurrentPage(1);
-  };
 
   // Filter data for Tanzania if it contains multiple countries
   const getTanzaniaData = () => {
@@ -103,27 +84,10 @@ function Home() {
 
   return (
     <div className="home-container">
-      {/* File Upload Section */}
-      <div className="file-upload-container">
+      {/* File Info */}
+      <div className="file-info-container">
         <div className="file-info">
-          <span>Current file: {fileName}</span>
-          {customFile && (
-            <button className="remove-file-btn" onClick={removeUploadedFile}>
-              Remove Uploaded File
-            </button>
-          )}
-        </div>
-        <div className="upload-btn-wrapper">
-          <label htmlFor="file-upload" className="upload-btn">
-            Upload Excel File
-          </label>
-          <input
-            id="file-upload"
-            type="file"
-            accept=".xlsx, .xls"
-            onChange={handleFileUpload}
-            style={{ display: "none" }}
-          />
+          <span>📊 Current file: model.xlsx</span>
         </div>
       </div>
 
