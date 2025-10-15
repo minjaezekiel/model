@@ -8,38 +8,44 @@ export const detectDataType = (sheetData, dataColumn) => {
   const numericCount = values.filter(v => !isNaN(parseFloat(v)) && isFinite(v)).length;
   const isNumerical = numericCount / values.length > 0.9; // >90% numeric
 
-  if (isNumerical) {
-    const nums = values.map(v => parseFloat(v)).filter(v => !isNaN(v));
-    const min = Math.min(...nums);
-    const max = Math.max(...nums);
-    const classes = 5; // 5 classes matching INFORM levels
-    // Risk palette: Low (green) to High (red), shining/strong for visibility
-    return {
-      type: 'numerical',
-      scale: { 
-        min, 
-        max, 
-        classes, 
-        colors: ['#047a3fff', '#038103ff', '#b99e03ff', '#a85e04ff', '#9e2c03ff'], // Very Low (bright green) -> Very High (vivid red)
-        labels: ['Very Low', 'Low', 'Medium', 'High', 'Very High'] // For legend
+if (isNumerical) {
+  const nums = values.map(v => parseFloat(v)).filter(v => !isNaN(v));
+  const min = Math.min(...nums);
+  const max = Math.max(...nums);
+  const classes = 5; // 5 classes matching INFORM levels
+  // Risk palette: Very Low (green) → Very High (red)
+  return {
+    type: 'numerical',
+    scale: { 
+      min, 
+      max, 
+      classes, 
+      colors: ['#FFFFFF', '#FFFF00', '#FFA500', '#FF0000', '#A52A2A'], 
+      labels: ['Very Low', 'Low', 'Medium', 'High', 'Very High'] // Legend labels
+    }
+  };
+} else {
+  // Categorical mapping with pure spectrum colors
+  return {
+    type: 'categorical',
+    scale: {
+      mappings: {
+        'very low': '#FFFFFF',
+        'low': '#FFFF00',
+        'medium': '#FFA500',
+        'high': '#FF0000',
+        'very high': '#A52A2A',
+        'extreme': '#654321',
+        'available': '#0000FF',
+        'not available': '#00FF00',
+        'yes': '#0000FF',
+        'no': '#00FF00',
+        // Default fallback
+        default: '#9E9E9E'
       }
-    };
-  } else {
-    // Categorical mapping (extended for INFORM risk terms)
-    return {
-      type: 'categorical',
-      scale: {
-        mappings: {
-          'very low': '#00944aff', low: '#029402ff', no: '#039403ff', available: '#008f00ff',
-          medium: '#a88f02ff', moderate: '#9c8503ff',
-          high: '#965303ff', 'very high': '#972a03ff', extreme: '#491502ff',
-          yes: '#005ca7ff',
-          // Defaults
-          default: '#9E9E9E'
-        }
-      }
-    };
+    }
   }
+}
 };
 
 // Get color for a value
@@ -63,7 +69,7 @@ export const getColorForValue = (value, dataType, scale) => {
 // Get full style for a GeoJSON feature
 export const getStyleForFeature = (value, dataType, scale, isSelected, isRegion = false) => {
   const baseColor = getColorForValue(value, dataType, scale);
-  const fillOpacity = isSelected ? 0.7 : (isRegion ? 0.2 : 0.4); // Fainter for regions
+  const fillOpacity = isSelected ? 0.9 : (isRegion ? 0.7 : 0.9); // Fainter for regions
   const color = isSelected ? '#1e3a8a' : baseColor;
   const weight = isSelected ? 3 : (isRegion ? 1 : 2);
 
