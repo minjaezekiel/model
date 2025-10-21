@@ -1,5 +1,4 @@
 import React from "react";
-import "./SearchBar.css";
 
 function SearchBar({ searchQuery, setSearchQuery }) {
   return (
@@ -9,6 +8,9 @@ function SearchBar({ searchQuery, setSearchQuery }) {
         placeholder="Search in this sheet..."
         value={searchQuery}
         onChange={(e) => setSearchQuery(e.target.value)}
+        style={{
+          borderColor: 'var(--primary-color, #dcdfe6)'
+        }}
       />
     </div>
   );

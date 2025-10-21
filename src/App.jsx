@@ -5,9 +5,8 @@ import "./App.css";
 function App() {
   return (
     <div className="app">
-      <header className="app-header">
-        <h1>INFORM TANZANIA </h1>
-        <p>Index For Risk Management model 🇹🇿 </p>
+      <header className="app-header" id="app-header">
+        <h1>INFORM TANZANIA</h1>
       </header>
       <Home />
     </div>
