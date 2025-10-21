@@ -1,9 +1,10 @@
 .inform-footer {
-  background: #2d3748;
+  background: #1a202c;
   color: white;
   padding: 2rem 1rem 1rem;
   border-top: 4px solid;
   margin-top: auto;
+  transition: all 0.3s ease;
 }
 
 .footer-content {
@@ -16,13 +17,14 @@
 }
 
 .footer-section h3 {
-  font-size: 1.2rem;
+  font-size: 1.1rem;
   margin-bottom: 1rem;
   font-weight: 600;
+  transition: color 0.3s ease;
 }
 
 .footer-section h4 {
-  font-size: 1rem;
+  font-size: 0.95rem;
   margin-bottom: 0.75rem;
   color: #e2e8f0;
   font-weight: 500;
@@ -31,7 +33,8 @@
 .footer-section p {
   color: #a0aec0;
   line-height: 1.5;
-  font-size: 0.9rem;
+  font-size: 0.85rem;
+  transition: color 0.3s ease;
 }
 
 .contact-list {
@@ -42,7 +45,8 @@
 
 .contact-item {
   color: #cbd5e0;
-  font-size: 0.9rem;
+  font-size: 0.85rem;
+  transition: color 0.3s ease;
 }
 
 .links-list {
@@ -54,29 +58,131 @@
 .footer-link {
   color: #cbd5e0;
   text-decoration: none;
-  font-size: 0.9rem;
-  transition: color 0.2s;
+  font-size: 0.85rem;
+  transition: all 0.3s ease;
+  position: relative;
+  padding-left: 0;
 }
 
 .footer-link:hover {
   color: white;
+  padding-left: 5px;
+}
+
+.footer-link::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 0;
+  height: 2px;
+  background: currentColor;
+  transition: width 0.3s ease;
+}
+
+.footer-link:hover::before {
+  width: 8px;
 }
 
 .logo-section {
   text-align: center;
+  padding: 0.5rem;
 }
 
 .tanzania-flag {
   font-size: 2rem;
   margin-bottom: 0.5rem;
+  filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
+}
+
+.logo-section p {
+  margin: 0.25rem 0;
+  font-size: 0.8rem;
 }
 
 .footer-bottom {
-  border-top: 1px solid #4a5568;
+  border-top: 1px solid #2d3748;
   padding-top: 1rem;
   text-align: center;
   color: #a0aec0;
-  font-size: 0.85rem;
+  font-size: 0.8rem;
+  transition: border-color 0.3s ease;
+}
+
+/* Dynamic color classes for each category */
+.footer-risk {
+  border-top-color: #E63946;
+}
+
+.footer-risk .footer-section h3,
+.footer-risk .footer-link:hover,
+.footer-risk .contact-item:hover {
+  color: #E63946;
+}
+
+.footer-warning {
+  border-top-color: #F4A261;
+}
+
+.footer-warning .footer-section h3,
+.footer-warning .footer-link:hover,
+.footer-warning .contact-item:hover {
+  color: #F4A261;
+}
+
+.footer-severity {
+  border-top-color: #2A9D8F;
+}
+
+.footer-severity .footer-section h3,
+.footer-severity .footer-link:hover,
+.footer-severity .contact-item:hover {
+  color: #2A9D8F;
+}
+
+.footer-climate {
+  border-top-color: #457B9D;
+}
+
+.footer-climate .footer-section h3,
+.footer-climate .footer-link:hover,
+.footer-climate .contact-item:hover {
+  color: #457B9D;
+}
+
+/* Hover effects for the entire footer */
+.footer-risk:hover {
+  border-top-color: #f30c20ff;
+}
+
+.footer-warning:hover {
+  border-top-color: #d4950dff;
+}
+
+.footer-severity:hover {
+  border-top-color: #860ad8ff;
+}
+
+.footer-climate:hover {
+  border-top-color: #07b1bdff;
+}
+
+/* Gradient background variations */
+.footer-risk {
+  background: linear-gradient(135deg, #1a202c 0%, #2a1a1c 100%);
+}
+
+.footer-warning {
+  background: linear-gradient(135deg, #1a202c 0%, #2a241c 100%);
+}
+
+.footer-severity {
+  background: linear-gradient(135deg, #1a202c 0%, #1c2a28 100%);
+}
+
+.footer-climate {
+  background: linear-gradient(135deg, #1a202c 0%, #1c242a 100%);
 }
 
 /* Responsive Design */
@@ -90,20 +196,82 @@
   .inform-footer {
     padding: 1.5rem 1rem 1rem;
   }
+  
+  .footer-section h3 {
+    font-size: 1rem;
+  }
+  
+  .footer-section h4 {
+    font-size: 0.9rem;
+  }
 }
 
 @media (max-width: 480px) {
   .footer-section h3 {
-    font-size: 1.1rem;
+    font-size: 0.95rem;
   }
   
   .footer-section h4 {
-    font-size: 0.95rem;
+    font-size: 0.85rem;
   }
   
   .footer-section p,
   .contact-item,
   .footer-link {
-    font-size: 0.85rem;
+    font-size: 0.8rem;
   }
+  
+  .tanzania-flag {
+    font-size: 1.75rem;
+  }
+  
+  .logo-section p {
+    font-size: 0.75rem;
+  }
+}
+
+/* Animation for footer appearance */
+@keyframes footerSlideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.inform-footer {
+  animation: footerSlideUp 0.6s ease-out;
+}
+
+/* Enhanced hover effects for interactive elements */
+.contact-item {
+  transition: all 0.3s ease;
+  padding: 2px 0;
+}
+
+.contact-item:hover {
+  transform: translateX(5px);
+}
+
+.footer-section h3 {
+  position: relative;
+  display: inline-block;
+}
+
+.footer-section h3::after {
+  content: '';
+  position: absolute;
+  bottom: -5px;
+  left: 0;
+  width: 0;
+  height: 2px;
+  background: currentColor;
+  transition: width 0.3s ease;
+}
+
+.footer-section:hover h3::after {
+  width: 100%;
 }

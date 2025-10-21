@@ -6,10 +6,10 @@ function Footer({ currentCategory }) {
   const content = FOOTER_CONTENT[currentCategory] || FOOTER_CONTENT.risk
 
   return (
-    <footer className="inform-footer" style={{ borderTopColor: content.color }}>
+    <footer className={`inform-footer footer-${currentCategory}`}>
       <div className="footer-content">
         <div className="footer-section">
-          <h3 style={{ color: content.color }}>{content.title}</h3>
+          <h3>{content.title}</h3>
           <p>{content.description}</p>
         </div>
         
